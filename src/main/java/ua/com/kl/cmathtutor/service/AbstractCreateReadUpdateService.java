@@ -4,12 +4,12 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import ua.com.kl.cmathtutor.domain.entity.IdContainer;
-import ua.com.kl.cmathtutor.exeption.NotFoundException;
-import ua.com.kl.cmathtutor.repository.CrudRepository;
+import ua.com.kl.cmathtutor.exception.NotFoundException;
+import ua.com.kl.cmathtutor.repository.CreateReadUpdateRepository;
 
 public abstract class AbstractCreateReadUpdateService<T extends IdContainer> implements CreateReadUpdateService<T> {
 
-    protected abstract CrudRepository<T> getRepository();
+    protected abstract CreateReadUpdateRepository<T> getRepository();
 
     @Override
     public T create(T entity) {

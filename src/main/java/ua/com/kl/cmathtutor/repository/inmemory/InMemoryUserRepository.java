@@ -3,7 +3,7 @@ package ua.com.kl.cmathtutor.repository.inmemory;
 import java.util.Optional;
 
 import ua.com.kl.cmathtutor.domain.entity.User;
-import ua.com.kl.cmathtutor.exeption.DuplicateKeyException;
+import ua.com.kl.cmathtutor.exception.DuplicateKeyException;
 import ua.com.kl.cmathtutor.repository.UserRepository;
 
 public class InMemoryUserRepository extends AbstractCrudInMemoryRepository<User> implements UserRepository {

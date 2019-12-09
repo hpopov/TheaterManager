@@ -2,7 +2,7 @@ package ua.com.kl.cmathtutor.service;
 
 import java.util.List;
 
-import ua.com.kl.cmathtutor.exeption.NotFoundException;
+import ua.com.kl.cmathtutor.exception.NotFoundException;
 
 public interface CreateReadUpdateService<T> {
 

@@ -23,13 +23,17 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import ua.com.kl.cmathtutor.domain.entity.IdContainer;
 
+//@ExtendWith(SpringExtension.class)
+//@ContextConfiguration(classes = InMemoryRepositoryConfiguration.class)
 abstract public class AbstractCrudInMemoryRepositoryTest<T extends Serializable & IdContainer> {
 
-    protected AbstractCrudInMemoryRepository<T> repository;
+//    private ApplicationContext ctx;
+    private AbstractCrudInMemoryRepository<T> repository;
 
     @BeforeEach
     private void setUpBeforeEachAbstract() throws Exception {
 	repository = getRepositoryForTesting();
+//	repository.setApplicationContext(ctx);
     }
 
     protected abstract AbstractCrudInMemoryRepository<T> getRepositoryForTesting();

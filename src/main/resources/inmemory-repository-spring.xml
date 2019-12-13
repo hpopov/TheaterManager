@@ -13,10 +13,10 @@
 
 	<bean id="inMemoryUserRepository" class="ua.com.kl.cmathtutor.repository.inmemory.InMemoryUserRepository" />
 	<!-- <bean id="userModel" class="ua.com.kl.cmathtutor.domain.entity.User" scope="prototype"></bean> -->
-	<bean id="inMemoryEventRepository" class="ua.com.kl.cmathtutor.repository.inmemory.InMemoryEventRepository" />
+	<bean id="inMemoryEventRepository" class="ua.com.kl.cmathtutor.repository.inmemory.InMemoryEventRepository"/>
 	<bean id="inMemoryEventPresentationRepository"
 		class="ua.com.kl.cmathtutor.repository.inmemory.InMemoryEventPresentationRepository">
-		<constructor-arg ref="inMemoryEventRepository"></constructor-arg>
+		<property name="eventRepository" ref="inMemoryEventRepository"></property>
 	</bean>
 
 </beans>

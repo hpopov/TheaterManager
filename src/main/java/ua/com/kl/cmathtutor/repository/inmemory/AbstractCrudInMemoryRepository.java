@@ -19,39 +19,19 @@ public abstract class AbstractCrudInMemoryRepository<T extends IdContainer & Ser
 
     private AtomicInteger idCounter;
     private Map<Integer, T> entitiesById;
-//    private TypeToken<T> typeToken;
-//    private ApplicationContext applicationContext;
-
-//    @Override
-//    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-//	this.applicationContext = applicationContext;
-//    }
 
     public AbstractCrudInMemoryRepository() {
 	this.idCounter = new AtomicInteger(1);
 	this.entitiesById = new HashMap<>();
-//	typeToken = createTypeToken();
     }
 
     protected Integer selectId() {
 	return Integer.valueOf(idCounter.getAndIncrement());
     }
 
-//    @SuppressWarnings("serial")
-//    private TypeToken<T> createTypeToken() {
-//	return new TypeToken<T>(getClass()) {
-//	};
-//    }
-
     protected T deepCopy(T entity) {
 	return SerializationUtils.roundtrip(entity);
     }
-
-//    @Override
-//    @SuppressWarnings("unchecked")
-//    public T createInstance() {
-//	return (T) applicationContext.getBean(typeToken.getRawType());
-//    }
 
     @Override
     public List<T> findAll() {

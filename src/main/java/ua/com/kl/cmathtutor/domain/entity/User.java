@@ -21,4 +21,5 @@ public class User implements IdContainer, Serializable {
     private String email;
     private String password;
     private Date birthdayDate;
+    private Integer purchasedTicketsNumber;
 }

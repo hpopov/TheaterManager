@@ -15,7 +15,7 @@ import ua.com.kl.cmathtutor.domain.entity.User;
 public class EveryNthTicketDiscountStrategy extends AbstractDiscountStrategy {
 
     private int n = 10;
-    private double nthTicketDiscountInPercent = 50;
+    private double nthTicketDiscountInPercent = 50d;
 
     @Override
     protected Collection<Double> getDiscountInPercentForSingleUserTickets(User owner, Collection<Ticket> tickets) {
@@ -25,7 +25,7 @@ public class EveryNthTicketDiscountStrategy extends AbstractDiscountStrategy {
 	}
 	List<Double> discountsInPercent = new ArrayList<>(tickets.size());
 	for (int i = 0; i < tickets.size(); ++i) {
-	    if ((i + alreadyBoughtWithoutDiscountTicketsNumber) % n == 0) {
+	    if ((i + alreadyBoughtWithoutDiscountTicketsNumber + 1) % n == 0) {
 		discountsInPercent.add(nthTicketDiscountInPercent);
 	    } else {
 		discountsInPercent.add(0d);

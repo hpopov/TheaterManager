@@ -11,23 +11,11 @@ import ua.com.kl.cmathtutor.service.strategy.DiscountStrategy;
 @Slf4j
 public abstract class AbstractDiscountStrategy implements DiscountStrategy {
 
-//    @Override
-//    public final double getDiscountPercent(Collection<Ticket> tickets) {
-//	long distinctOwnersCount = tickets.stream().map(Ticket::getOwner).map(User::getId).distinct().count();
-//	if (distinctOwnersCount != 1L) {
-//	    throw new IllegalArgumentException("Tickets handled to DiscountStrategy should have the same owner!");
-//	}
-//	if (tickets.size() == 0) {
-//	    log.warn("Reveived tickets collection with size of 0. Probably something went wrong...");
-//	    return 0;
-//	}
-//	return getDiscountInPercentForSingleUserTickets(tickets.iterator().next().getOwner(), tickets);
-//    }
-
     @Override
     public Collection<Double> getDiscountsPercentForTickets(Collection<Ticket> tickets) {
-	long distinctOwnersCount = tickets.stream().map(Ticket::getOwner).map(User::getId).distinct().count();
-	if (distinctOwnersCount != 1L) {
+	long distinctOwnersCount = tickets.stream().map(Ticket::getOwner)
+		.map(owner -> owner == null ? null : owner.getId()).distinct().count();
+	if (distinctOwnersCount > 1L) {
 	    throw new IllegalArgumentException("Tickets handled to DiscountStrategy should have the same owner!");
 	}
 	if (tickets.size() == 0) {

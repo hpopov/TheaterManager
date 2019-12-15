@@ -13,8 +13,12 @@ import ua.com.kl.cmathtutor.service.strategy.DiscountStrategy;
 @Service
 public class DefaultDiscountService implements DiscountService {
 
-    @Autowired
     private Iterable<DiscountStrategy> discountStrategies;
+
+    @Autowired
+    public DefaultDiscountService(Iterable<DiscountStrategy> discountStrategies) {
+	this.discountStrategies = discountStrategies;
+    }
 
     @Override
     public void applyDiscountToTickets(Collection<Ticket> tickets) {

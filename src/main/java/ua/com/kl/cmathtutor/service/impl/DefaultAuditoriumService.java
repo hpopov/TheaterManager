@@ -14,9 +14,13 @@ import ua.com.kl.cmathtutor.service.AuditoriumService;
 @Service
 public class DefaultAuditoriumService implements AuditoriumService {
 
-    @Autowired
     private List<Auditorium> auditoriums;
-    
+
+    @Autowired
+    public DefaultAuditoriumService(List<Auditorium> auditoriums) {
+	this.auditoriums = auditoriums;
+    }
+
     @Override
     public List<Auditorium> getAll() {
 	return Collections.unmodifiableList(auditoriums);

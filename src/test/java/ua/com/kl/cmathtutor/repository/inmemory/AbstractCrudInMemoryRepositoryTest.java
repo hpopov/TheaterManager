@@ -1,39 +1,39 @@
 package ua.com.kl.cmathtutor.repository.inmemory;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.everyItem;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.IsNot.not;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.hamcrest.CustomTypeSafeMatcher;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import ua.com.kl.cmathtutor.domain.entity.IdContainer;
 
-//@ExtendWith(SpringExtension.class)
-//@ContextConfiguration(classes = InMemoryRepositoryConfiguration.class)
 abstract public class AbstractCrudInMemoryRepositoryTest<T extends Serializable & IdContainer> {
 
-//    private ApplicationContext ctx;
     private AbstractCrudInMemoryRepository<T> repository;
 
     @BeforeEach
     private void setUpBeforeEachAbstract() throws Exception {
 	repository = getRepositoryForTesting();
-//	repository.setApplicationContext(ctx);
     }
 
     protected abstract AbstractCrudInMemoryRepository<T> getRepositoryForTesting();
@@ -102,6 +102,7 @@ abstract public class AbstractCrudInMemoryRepositoryTest<T extends Serializable 
 	T savedEntity = repository.save(getDummyEntity());
 	Integer savedOldEntityId = savedEntity.getId();
 	savedEntity.setId(2 * savedOldEntityId);
+	modifyUniqueAttributes(savedEntity);
 	repository.save(savedEntity);
 
 	Optional<T> foundEntity = repository.findById(savedEntity.getId());
@@ -113,17 +114,19 @@ abstract public class AbstractCrudInMemoryRepositoryTest<T extends Serializable 
 		() -> assertThat(foundOldEntity.get(), not(equalTo(savedEntity))));
     }
 
+    protected abstract void modifyUniqueAttributes(T savedEntity);
+
     @Test
     void whenSeveralEntitiesAreCreated_Then_findAll_ShouldReturnAllSavedEntities() {
-	Stream<T> entities = getAllEntities();
-	List<T> expectedEntities = entities.map(repository::save).collect(Collectors.toList());
+	List<T> entities = getAllEntities();
+	List<T> expectedEntities = entities.stream().map(repository::save).collect(Collectors.toList());
 
 	List<T> foundEntities = repository.findAll();
 
 	assertThat(foundEntities, containsInAnyOrder(expectedEntities.toArray()));
     }
 
-    public abstract Stream<T> getAllEntities();
+    public abstract List<T> getAllEntities();
 
     @Test
     void whenEntityExists_Then_deleteById_ShouldReturnTrueAndDeleteEntity() {
@@ -151,14 +154,11 @@ abstract public class AbstractCrudInMemoryRepositoryTest<T extends Serializable 
 	assertFalse(repository.delete(getDummyEntity()));
     }
 
-    @ParameterizedTest(name = "Id of created entity among {0} created ones must be equal to index+1")
-    @ValueSource(ints = { 5, 4, 27 })
-    void whenSeveralEntitiesAreCreated_Then_TheyShouldContainsSequentialId(int n) {
-	List<T> createdEntities = new LinkedList<>();
-
-	for (int i = 0; i < n; ++i) {
-	    createdEntities.add(repository.save(getDummyEntity()));
-	}
+    @Test
+    @DisplayName("Id of created entity among all created ones must be equal to index+1")
+    void whenSeveralEntitiesAreCreated_Then_TheyShouldContainsSequentialId() {
+	List<T> createdEntities = getAllEntities().stream().map(getRepositoryForTesting()::save)
+		.collect(Collectors.toList());
 
 	assertThat(createdEntities.stream().map(e -> new ImmutablePair<>(createdEntities.indexOf(e), e))
 		.collect(Collectors.toSet()), everyItem(hasCorrectId()));

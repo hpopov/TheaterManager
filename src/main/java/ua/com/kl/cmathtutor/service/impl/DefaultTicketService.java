@@ -1,6 +1,7 @@
 package ua.com.kl.cmathtutor.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
 
 import lombok.extern.slf4j.Slf4j;
@@ -50,10 +52,12 @@ public class DefaultTicketService implements TicketService {
     public List<Ticket> getNewTicketsForEventPresentation(EventPresentation eventPresentation, Set<Integer> seatNumbers)
 	    throws TicketsAlreadyBookedException {
 	assertTicketsForSpecifiedSeatsAreNotBookedAlready(eventPresentation, seatNumbers);
-	return seatNumbers.stream()
+	List<Ticket> tickets = seatNumbers.stream()
 		.map(seat -> Ticket.builder().eventPresentation(eventPresentation).seatNumber(seat).build())
 		.peek(this::calculateTicketPrice)
 		.collect(Collectors.toList());
+	discountService.applyDiscountToTickets(tickets);
+	return tickets;
     }
 
     private void assertTicketsForSpecifiedSeatsAreNotBookedAlready(EventPresentation eventPresentation,
@@ -75,14 +79,14 @@ public class DefaultTicketService implements TicketService {
 	if (event.getRating() == Rating.HIGH) {
 	    ticketPrice *= ticketCalculationProperties.highRatedEventsPriceMultiplier();
 	}
-	ticket.setCalculatedriceInCents(ticketPrice);
+	ticket.setCalculatedPriceInCents(ticketPrice);
     }
 
     @Override
     public List<Ticket> getNewTicketsForEventPresentationAndOwner(EventPresentation eventPresentation,
 	    Set<Integer> seatNumbers, User owner) throws TicketsAlreadyBookedException {
 	assertTicketsForSpecifiedSeatsAreNotBookedAlready(eventPresentation, seatNumbers);
-	return seatNumbers.stream()
+	List<Ticket> tickets = seatNumbers.stream()
 		.map(seat -> Ticket.builder()
 			.eventPresentation(eventPresentation)
 			.seatNumber(seat)
@@ -90,12 +94,14 @@ public class DefaultTicketService implements TicketService {
 			.build())
 		.peek(this::calculateTicketPrice)
 		.collect(Collectors.toList());
+	discountService.applyDiscountToTickets(tickets);
+	return tickets;
     }
 
     @Override
     public List<Ticket> bookTickets(List<Ticket> tickets) throws TicketsAlreadyBookedException {
 	HashMultimap<EventPresentation, Integer> seatNumbersByEventPresentation = HashMultimap.create();
-	Multimap<User, Ticket> ticketsByOwner = HashMultimap.create();
+	Multimap<User, Ticket> ticketsByOwner = LinkedHashMultimap.create();
 	tickets.forEach(ticket -> {
 	    seatNumbersByEventPresentation.put(ticket.getEventPresentation(), ticket.getSeatNumber());
 	    ticketsByOwner.put(ticket.getOwner(), ticket);
@@ -113,6 +119,9 @@ public class DefaultTicketService implements TicketService {
 
     private void incrementPurchasedTicketsForOwner(Ticket ticket) {
 	User owner = ticket.getOwner();
+	if (Objects.isNull(owner)) {
+	    return;
+	}
 	owner.setPurchasedTicketsNumber(owner.getPurchasedTicketsNumber() + 1);
 	try {
 	    userService.updateById(owner.getId(), owner);

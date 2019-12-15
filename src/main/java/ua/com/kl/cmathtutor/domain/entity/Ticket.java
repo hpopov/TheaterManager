@@ -24,5 +24,7 @@ public class Ticket implements IdContainer, Serializable {
     @Builder.Default
     private Boolean isBooked = false;
     private Integer seatNumber;
-    private Long calculatedriceInCents;
+    private Long calculatedPriceInCents;
+    private Double discountInPercent;
+    private Long totalPriceInCents;
 }

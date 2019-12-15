@@ -9,18 +9,18 @@
     	http://www.springframework.org/schema/util
 		http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 
-	<context:property-placeholder location="classpath:auditorium-spring.properties" value-separator=":" />
+	<context:property-placeholder location="classpath:auditorium.properties" value-separator=":" />
 
-	<util:list>
+	<util:list id="auditoriums">
 		<bean class="ua.com.kl.cmathtutor.domain.entity.Auditorium">
-			<property name="name" value="${red.name}"/>
-			<property name="numberOfSeats" value="${red.numberOfSeats}"/>
-			<property name="vipSeats" value="${red.vipSeats}"/>
+			<constructor-arg name="name" value="${red.name}" />
+			<constructor-arg name="numberOfSeats" value="${red.numberOfSeats}" />
+			<constructor-arg name="vipSeatsString" value="${red.vipSeats}" />
 		</bean>
 		<bean class="ua.com.kl.cmathtutor.domain.entity.Auditorium">
-			<property name="name" value="${green.name}"/>
-			<property name="numberOfSeats" value="${green.numberOfSeats}"/>
-			<property name="vipSeats" value="${green.vipSeats}"/>
+			<constructor-arg name="name" value="${green.name}" />
+			<constructor-arg name="numberOfSeats" value="${green.numberOfSeats}" />
+			<constructor-arg name="vipSeatsString" value="${green.vipSeats}" />
 		</bean>
 	</util:list>
 </beans>

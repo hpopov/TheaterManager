@@ -24,4 +24,6 @@ public class User implements IdContainer, Serializable {
     private Date birthdayDate;
     @Builder.Default
     private Integer purchasedTicketsNumber = 0;
+    @Builder.Default
+    private boolean isAdmin = false;
 }

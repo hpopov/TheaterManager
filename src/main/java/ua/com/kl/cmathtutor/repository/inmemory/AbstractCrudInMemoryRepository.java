@@ -48,12 +48,18 @@ public abstract class AbstractCrudInMemoryRepository<T extends IdContainer & Ser
 
     @Override
     public T save(T entity) {
+	if (Objects.isNull(entity)) {
+	    throw new IllegalArgumentException("entity must not be null");
+	}
+	checkMandatoryAttributes(entity);
 	if (Objects.isNull(entity.getId()) || !entitiesById.containsKey(entity.getId())) {
 	    entity.setId(selectId());
 	}
 	entitiesById.put(entity.getId(), deepCopy(entity));
 	return entity;
     }
+
+    protected abstract void checkMandatoryAttributes(T entity);
 
     public boolean deleteById(Integer id) {
 	if (Objects.isNull(id)) {

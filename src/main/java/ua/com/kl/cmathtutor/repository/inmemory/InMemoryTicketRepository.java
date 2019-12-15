@@ -16,6 +16,7 @@ public class InMemoryTicketRepository extends AbstractRefreshableCrudInMemoryRep
 	implements TicketRepository {
 
     private static final String INVALID_ATTRIBUTE_MESSAGE = "Entity for attribute [%s] in ticket with id %s does not exist";
+    private static final String ATTRIBUTE_IS_MANDATORY_MSG = "Attribute [%s] is mandatory for entity Ticket";
 
     @Setter
     private UserRepository userRepository;
@@ -23,10 +24,10 @@ public class InMemoryTicketRepository extends AbstractRefreshableCrudInMemoryRep
     private EventPresentationRepository eventPresentationRepository;
 
     @Override
-    public Ticket save(Ticket ticket) {
+    protected void checkMandatoryAttributes(Ticket ticket) {
 	EventPresentation eventPresentation = ticket.getEventPresentation();
 	if (Objects.isNull(eventPresentation)) {
-	    throw new MandatoryAttributeException("Ticket must have a reference to EventPresentation!");
+	    throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "eventPresentation"));
 	}
 	if (!eventPresentationRepository.findById(eventPresentation.getId()).isPresent()) {
 	    throw new InvalidAttributeException(
@@ -37,7 +38,9 @@ public class InMemoryTicketRepository extends AbstractRefreshableCrudInMemoryRep
 	    throw new InvalidAttributeException(
 		    String.format(INVALID_ATTRIBUTE_MESSAGE, "owner", ticket.getId()));
 	}
-	return super.save(ticket);
+	if (Objects.isNull(ticket.getSeatNumber())) {
+	    throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "seatNumber"));
+	}
     }
 
     @Override

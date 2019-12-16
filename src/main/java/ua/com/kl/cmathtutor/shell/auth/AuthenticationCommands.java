@@ -3,7 +3,6 @@ package ua.com.kl.cmathtutor.shell.auth;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.converters.DateConverter;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliAvailabilityIndicator;
 import org.springframework.shell.core.annotation.CliCommand;
@@ -22,22 +21,22 @@ public class AuthenticationCommands implements CommandMarker {
     @Autowired
     private UserService userService;
 
-    @CliAvailabilityIndicator({ "tm log-out" })
+    @CliAvailabilityIndicator({ "auth log-out" })
     public boolean isLogoutAvailable() {
 	return authenticationState.isAuthenticated();
     }
 
-    @CliAvailabilityIndicator({ "tm current-user" })
+    @CliAvailabilityIndicator({ "auth current" })
     public boolean isCurrentUserAvailable() {
 	return authenticationState.isAuthenticated();
     }
 
-    @CliAvailabilityIndicator({ "tm sign-up", "tm sign-in" })
+    @CliAvailabilityIndicator({ "auth sign-up", "auth sign-in" })
     public boolean isSignAvailable() {
 	return !authenticationState.isAuthenticated();
     }
 
-    @CliCommand(value = "tm sign-up", help = "Register new user")
+    @CliCommand(value = "auth sign-up", help = "Register new user")
     public String signUp(
 	    @CliOption(key = { "name" }, mandatory = false, help = "First name of the user") final String firstName,
 	    @CliOption(key = { "surname" }, mandatory = false, help = "Last name of the user") final String lastName,
@@ -56,7 +55,7 @@ public class AuthenticationCommands implements CommandMarker {
 		registeredUser.getId());
     }
 
-    @CliCommand(value = "tm sign-in", help = "Sign user in")
+    @CliCommand(value = "auth sign-in", help = "Sign user in")
     public String signIn(
 	    @CliOption(key = { "email" }, mandatory = true, help = "User email (is used as login)") final String email,
 	    @CliOption(key = { "password" }, mandatory = true, help = "User password") final String password) {
@@ -73,10 +72,15 @@ public class AuthenticationCommands implements CommandMarker {
 	return "Incorrect password for user with email " + email + ".";
     }
 
-    @CliCommand(value = "tm log-out", help = "Log user out")
+    @CliCommand(value = "auth log-out", help = "Log user out")
     public String logOut() {
 	String email = authenticationState.getAuthenticatedUser().getEmail();
 	authenticationState.setAuthenticatedUser(null);
 	return "User with email " + email + " logged out successfully.";
+    }
+
+    @CliCommand(value = "auth current", help = "View currently authenticated user")
+    public User getCurrentUser() {
+	return authenticationState.getAuthenticatedUser();
     }
 }

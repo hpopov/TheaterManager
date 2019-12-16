@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @SuppressWarnings("serial")
 @Data
@@ -20,6 +21,7 @@ public class User implements IdContainer, Serializable {
     private String firstName;
     private String lastName;
     private String email;
+    @ToString.Exclude
     private String password;
     private Date birthdayDate;
     @Builder.Default

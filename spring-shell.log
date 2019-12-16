@@ -5,3 +5,17 @@
 quit
 // Spring Shell 1.2.0.RELEASE log closed at 2019-12-15 23:32:55
 // Spring Shell 1.2.0.RELEASE log opened at 2019-12-15 23:35:19
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-16 09:58:14
+tm current
+tm sign-in --email admin --password admin
+tm current
+quit
+// Spring Shell 1.2.0.RELEASE log closed at 2019-12-16 09:59:24
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-16 15:25:54
+auth sign-in --email admin --password admin
+event all-presentations
+event place --name Tom\ Soier --baseTicketPriceInCents 1200 --rating HIGH
+event all-presentations
+event all-presentations
+quit
+// Spring Shell 1.2.0.RELEASE log closed at 2019-12-16 15:28:51

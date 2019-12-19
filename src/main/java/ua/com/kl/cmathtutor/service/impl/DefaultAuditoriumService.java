@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import ua.com.kl.cmathtutor.domain.entity.Auditorium;
@@ -17,7 +18,7 @@ public class DefaultAuditoriumService implements AuditoriumService {
     private List<Auditorium> auditoriums;
 
     @Autowired
-    public DefaultAuditoriumService(List<Auditorium> auditoriums) {
+    public DefaultAuditoriumService(@Qualifier("auditoriums") List<Auditorium> auditoriums) {
 	this.auditoriums = auditoriums;
     }
 

@@ -26,8 +26,8 @@ public class InMemoryUserRepository extends AbstractCrudInMemoryRepository<User>
 	    throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "email"));
 	}
 	long usersWithSameEmailCount = findAll().stream()
-		.filter(user -> entity.getEmail().equals(user.getEmail()))
-		.filter(user -> !entity.getId().equals(user.getId()))
+		.filter(user -> user.getEmail().equals(entity.getEmail()))
+		.filter(user -> !user.getId().equals(entity.getId()))
 		.count();
 	if (usersWithSameEmailCount != 0) {
 	    throw new DuplicateKeyException(String.format(

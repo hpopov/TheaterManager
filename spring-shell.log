@@ -19,3 +19,58 @@ event all-presentations
 event all-presentations
 quit
 // Spring Shell 1.2.0.RELEASE log closed at 2019-12-16 15:28:51
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-19 19:04:00
+user all
+auth sign-up --email adam --password dama --birthday 25-03-1999
+// [failed] auth sign-up --email adam --password damacl --birthday 26-03-1999
+// [failed] auth sign-up --email adam --password damacl --birthday 26-03-1999
+q
+// Spring Shell 1.2.0.RELEASE log closed at 2019-12-19 19:09:29
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-19 19:10:31
+auth sign-up --email adam --password dama --birthday 22-09-1994
+// [failed] auth sign-up --email adam --password dama --birthday 22-09-1994
+auth sign-up --email ddad --password dama --birthday 22-09-1994
+user all
+user by-id --id 2
+auth sign-in --email adam --password dama
+profile edit --name Adam --surname Mizkevych
+cls
+auth log-out
+auth sign-in --email admin --password admin
+event place --name 'Tom Soier\'s Adventure' --baseTicketPriceInCents 20000 --rating HIGH 
+// [failed] event present --airDate 27-01-2020 --auditorium red --durationInMilliseconds 360000 --eventId 1
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-19 19:28:17
+auditorium all
+q
+// Spring Shell 1.2.0.RELEASE log closed at 2019-12-19 19:33:53
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-19 19:36:55
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-19 19:36:56
+auditorium all
+q
+// Spring Shell 1.2.0.RELEASE log closed at 2019-12-19 19:40:25
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-19 19:46:15
+auditorium all
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-19 19:52:21
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-19 19:53:04
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-19 19:54:02
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-19 19:54:23
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-19 19:55:07
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-19 20:00:40
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-19 20:03:47
+q
+// Spring Shell 1.2.0.RELEASE log closed at 2019-12-19 20:07:09
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-19 20:07:32
+auditorium all
+auditorium by-name --name Red
+auth sign-in --email admin --password admin 
+event place --name 'Tom Soier\'s Adventures' --baseTicketPriceInCents 20000 --rating HIGH
+event all
+// [failed] event present --eventId 1 --auditorium Red --airDate 22-01-2020 --durationInMilliseconds 36000000
+q
+// Spring Shell 1.2.0.RELEASE log closed at 2019-12-19 20:11:27
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-19 20:12:03
+auth sign-in --email admin --password admin
+event place --name 'Tom Soier\'s Adventures'--baseTicketPriceInCents 20000 --rating HIGH 
+event present --airDate 20-01-2020 --eventId 1 --auditorium Red --durationInMilliseconds 36000000
+ticket purchased  --event-presentation-id 1
+ticket available  --event-presentation-id 1

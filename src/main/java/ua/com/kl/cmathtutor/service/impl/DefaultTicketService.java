@@ -131,7 +131,8 @@ public class DefaultTicketService implements TicketService {
 	for (User owner : ticketsByOwner.keySet()) {
 	    discountService.applyDiscountToTickets(ticketsByOwner.get(owner));
 	}
-	return tickets.stream().map(ticketRepository::save).peek(this::incrementPurchasedTicketsForOwner)
+	return tickets.stream().peek(ticket -> ticket.setIsBooked(true)).map(ticketRepository::save)
+		.peek(this::incrementPurchasedTicketsForOwner)
 		.collect(Collectors.toList());
     }
 

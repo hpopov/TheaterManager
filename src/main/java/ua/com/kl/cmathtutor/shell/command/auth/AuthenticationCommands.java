@@ -1,4 +1,4 @@
-package ua.com.kl.cmathtutor.shell.auth;
+package ua.com.kl.cmathtutor.shell.command.auth;
 
 import java.util.Date;
 

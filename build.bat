@@ -1,1 +1,2 @@
-mvn package appassembler:assemble
+call mvn package appassembler:assemble
+pause;

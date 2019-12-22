@@ -74,3 +74,23 @@ event place --name 'Tom Soier\'s Adventures'--baseTicketPriceInCents 20000 --rat
 event present --airDate 20-01-2020 --eventId 1 --auditorium Red --durationInMilliseconds 36000000
 ticket purchased  --event-presentation-id 1
 ticket available  --event-presentation-id 1
+// Spring Shell 1.2.0.RELEASE log opened at 2019-12-23 00:19:59
+help
+version
+auth sign-in --email admin --password admin
+event place --name 'Tom Soier\'s adventure' --baseTicketPriceInCents 20000 --rating HIGH
+event place --name 'Some Common Story' --baseTicketPriceInCents 26000 --rating MID
+event place --name 'Very Dull Movie' --baseTicketPriceInCents 16000 --rating LOW
+event all
+event present --eventId 1 --auditorium 'Red' --airDate 22-03-2020 --durationInMilliseconds 3600000
+// [failed] event present --eventId 1 --auditorium 'Red' --airDate 22-03-2020 --durationInMilliseconds 3600000
+event present --eventId 1 --auditorium 'Green' --airDate 22-03-2020 --durationInMilliseconds 3600000
+// [failed] event present --eventId 2 --auditorium 'Green' --airDate 22-03-2020 --durationInMilliseconds 3600000
+event present --eventId 2 --auditorium 'Green' --airDate 20-03-2020 --durationInMilliseconds 3600000
+event all-presentations
+auth log-out
+auth sign-up --email tordek --password tordek --birthday 25-03-1999
+auth sign-in --email tordek --password tordek
+auth current
+profile edit --name Hryhorii --surname Popov
+ticket available --event-presentation-id 1

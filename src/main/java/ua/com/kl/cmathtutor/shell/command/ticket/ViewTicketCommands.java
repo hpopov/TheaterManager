@@ -1,4 +1,4 @@
-package ua.com.kl.cmathtutor.shell.tickets;
+package ua.com.kl.cmathtutor.shell.command.ticket;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;
@@ -11,7 +11,7 @@ import ua.com.kl.cmathtutor.domain.entity.EventPresentation;
 import ua.com.kl.cmathtutor.exception.NotFoundException;
 import ua.com.kl.cmathtutor.service.EventPresentationService;
 import ua.com.kl.cmathtutor.service.TicketService;
-import ua.com.kl.cmathtutor.shell.auth.AuthenticationState;
+import ua.com.kl.cmathtutor.shell.command.auth.AuthenticationState;
 
 @Component
 public class ViewTicketCommands implements CommandMarker {
@@ -40,13 +40,15 @@ public class ViewTicketCommands implements CommandMarker {
 		    help = "EventPresentation id to search available seats for") final int eventPresentationId)
 	    throws NotFoundException {
 	EventPresentation eventPresentation = eventPresentationService.getById(eventPresentationId);
-	return String.format("There are following available seats for event %s which takes place at %s:\r\n",
-		eventPresentation.getEvent().getName(), eventPresentation.getAirDate()) +
+	return String.format(
+		"There are following available seats for event '%s' which takes place in '%s' auditory on %s:\r\n",
+		eventPresentation.getEvent().getName(), eventPresentation.getAuditorium().getName(),
+		eventPresentation.getAirDate()) +
 		ticketService.getAvailableSeatsForEventPresentation(eventPresentation);
     }
 
     @CliCommand(value = "ticket purchased",
-	    help = "View list of all purchased tickets for the specified event presentation")
+	    help = "View list of all purchased tickets for the specified event presentation [FOR ADMIN USAGE ONLY]")
     public String getAllPurchasedTicketsForEventPresentation(
 	    @CliOption(key = { "event-presentation-id" }, mandatory = true,
 		    help = "EventPresentation id to search purchased tickets for") final int eventPresentationId)

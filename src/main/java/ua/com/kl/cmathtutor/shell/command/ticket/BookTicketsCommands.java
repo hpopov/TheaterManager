@@ -1,4 +1,4 @@
-package ua.com.kl.cmathtutor.shell.tickets;
+package ua.com.kl.cmathtutor.shell.command.ticket;
 
 import java.util.List;
 import java.util.Scanner;
@@ -11,15 +11,13 @@ import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Component;
 
-import com.google.common.collect.Sets;
-
 import ua.com.kl.cmathtutor.domain.entity.EventPresentation;
 import ua.com.kl.cmathtutor.domain.entity.Ticket;
 import ua.com.kl.cmathtutor.exception.NotFoundException;
 import ua.com.kl.cmathtutor.exception.TicketsAlreadyBookedException;
 import ua.com.kl.cmathtutor.service.EventPresentationService;
 import ua.com.kl.cmathtutor.service.TicketService;
-import ua.com.kl.cmathtutor.shell.auth.AuthenticationState;
+import ua.com.kl.cmathtutor.shell.command.auth.AuthenticationState;
 
 @Component
 public class BookTicketsCommands implements CommandMarker {
@@ -41,19 +39,15 @@ public class BookTicketsCommands implements CommandMarker {
 	    @CliOption(key = { "event-presentation-id" }, mandatory = true,
 		    help = "EventPresentation id to search available seats for") final int eventPresentationId,
 	    @CliOption(key = { "seats" }, mandatory = true,
-		    help = "EventPresentation id to search available seats for") final int[] seats)
+		    help = "Set of seat numbers to book tickets for") final Set<Integer> seats)
 	    throws NotFoundException, TicketsAlreadyBookedException {
 	EventPresentation eventPresentation = eventPresentationService.getById(eventPresentationId);
-	Set<Integer> seatsSet = Sets.newHashSet();
-	for (int i = 0; i < seats.length; i++) {
-	    seatsSet.add(seats[i]);
-	}
 	List<Ticket> newTickets;
 	if (authenticationState.isAuthenticated()) {
-	    newTickets = ticketService.getNewTicketsForEventPresentationAndOwner(eventPresentation, seatsSet,
+	    newTickets = ticketService.getNewTicketsForEventPresentationAndOwner(eventPresentation, seats,
 		    authenticationState.getAuthenticatedUser());
 	} else {
-	    newTickets = ticketService.getNewTicketsForEventPresentation(eventPresentation, seatsSet);
+	    newTickets = ticketService.getNewTicketsForEventPresentation(eventPresentation, seats);
 	}
 	System.out.println(
 		String.format("Ticket details for event %s[%s] which takes place on %s in %s auditorium:",

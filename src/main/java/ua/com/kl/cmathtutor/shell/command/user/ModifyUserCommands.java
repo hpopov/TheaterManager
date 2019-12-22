@@ -1,7 +1,10 @@
-package ua.com.kl.cmathtutor.shell.user;
+package ua.com.kl.cmathtutor.shell.command.user;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;
@@ -13,7 +16,7 @@ import org.springframework.stereotype.Component;
 import ua.com.kl.cmathtutor.domain.entity.User;
 import ua.com.kl.cmathtutor.exception.NotFoundException;
 import ua.com.kl.cmathtutor.service.UserService;
-import ua.com.kl.cmathtutor.shell.auth.AuthenticationState;
+import ua.com.kl.cmathtutor.shell.command.auth.AuthenticationState;
 
 @Component
 public class ModifyUserCommands implements CommandMarker {
@@ -23,7 +26,26 @@ public class ModifyUserCommands implements CommandMarker {
     @Autowired
     private UserService userService;
 
-    @CliAvailabilityIndicator({ "profile edit" })
+    @PostConstruct
+    private void init() {
+	userService.create(User.builder()
+		.birthdayDate(Calendar.getInstance().getTime())
+		.email("admin")
+		.firstName("Administrator")
+		.isAdmin(true)
+		.lastName("Admin")
+		.password("admin")
+		.build());
+	userService.create(User.builder()
+		.birthdayDate(Calendar.getInstance().getTime())
+		.email("tordek")
+		.firstName("Hryhorii")
+		.lastName("Popov")
+		.password("tordek")
+		.build());
+    }
+
+    @CliAvailabilityIndicator({ "profile edit [FOR AUTHENNTICATED USERS ONLY]" })
     public boolean isModifyUserCommandsAvailable() {
 	return authenticationState.isAuthenticated();
     }
@@ -34,7 +56,8 @@ public class ModifyUserCommands implements CommandMarker {
 	    @CliOption(key = { "surname" }, mandatory = false, help = "Last name of the user") final String lastName,
 	    @CliOption(key = { "password" }, mandatory = false, help = "User password") final String password,
 	    @CliOption(key = {
-		    "birthday" }, mandatory = false, help = "User birth date in dd-mm-yyyy format") final Date birthdayDate)
+		    "birthday" }, mandatory = false,
+		    help = "User birth date in dd-mm-yyyy format") final Date birthdayDate)
 	    throws NotFoundException {
 	if (Objects.isNull(firstName) && Objects.isNull(lastName) && Objects.isNull(password)
 		&& Objects.isNull(birthdayDate)) {

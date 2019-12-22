@@ -1,4 +1,4 @@
-package ua.com.kl.cmathtutor.shell.user;
+package ua.com.kl.cmathtutor.shell.command.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;

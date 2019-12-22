@@ -1,4 +1,4 @@
-package ua.com.kl.cmathtutor.shell.auditorium;
+package ua.com.kl.cmathtutor.shell.command.auditorium;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;

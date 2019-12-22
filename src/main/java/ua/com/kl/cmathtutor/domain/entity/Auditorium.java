@@ -9,15 +9,18 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@SuppressWarnings("serial")
 @Data
+@NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder
 public class Auditorium implements Serializable {
 
-    private final String name;
-    private final Integer numberOfSeats;
-    private final Set<Integer> vipSeats;
+    private String name;
+    private Integer numberOfSeats;
+    private Set<Integer> vipSeats;
 
     public Auditorium(String name, Integer numberOfSeats, String vipSeatsString) {
 	this.name = name;

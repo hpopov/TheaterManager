@@ -9,6 +9,7 @@ import com.google.common.collect.Range;
 
 import ua.com.kl.cmathtutor.domain.entity.Auditorium;
 import ua.com.kl.cmathtutor.domain.entity.EventPresentation;
+import ua.com.kl.cmathtutor.exception.NotFoundException;
 import ua.com.kl.cmathtutor.repository.CreateReadUpdateRepository;
 import ua.com.kl.cmathtutor.repository.EventPresentationRepository;
 import ua.com.kl.cmathtutor.service.AbstractCreateReadUpdateService;
@@ -32,7 +33,7 @@ public class DefaultEventPresentationService extends AbstractCreateReadUpdateSer
     }
 
     private void assertEventPresentationIsNotConnectedToExistingOnes(EventPresentation eventPresentation)
-    		throws IllegalArgumentException{
+	    throws IllegalArgumentException {
 	if (isEventPresentationConnectedToExisting(eventPresentation)) {
 	    throw new IllegalArgumentException(
 		    "Air time range in this eventPresentation intersects with existing presentations!");
@@ -44,6 +45,7 @@ public class DefaultEventPresentationService extends AbstractCreateReadUpdateSer
 	Range<Date> currentEventPresentationTimeRange = getTimeRangeFromEventPresentation(eventPresentation);
 	return eventPresentationRepository.findAll().stream()
 		.filter(presentation -> auditorium.equals(presentation.getAuditorium()))
+		.filter(presentation -> !presentation.getId().equals(eventPresentation.getId()))
 		.map(this::getTimeRangeFromEventPresentation)
 		.anyMatch(tRange -> currentEventPresentationTimeRange.isConnected(tRange));
     }
@@ -51,6 +53,13 @@ public class DefaultEventPresentationService extends AbstractCreateReadUpdateSer
     private Range<Date> getTimeRangeFromEventPresentation(EventPresentation eventPresentation) {
 	return Range.open(eventPresentation.getAirDate(),
 		new Date(eventPresentation.getAirDate().getTime() + eventPresentation.getDurationInMilliseconds()));
+    }
+
+    @Override
+    public EventPresentation updateById(Integer id, EventPresentation entity) throws NotFoundException {
+	entity.setId(id);
+	assertEventPresentationIsNotConnectedToExistingOnes(entity);
+	return super.updateById(id, entity);
     }
 
     @Override

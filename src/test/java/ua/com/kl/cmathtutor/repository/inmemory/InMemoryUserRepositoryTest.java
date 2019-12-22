@@ -1,13 +1,24 @@
 package ua.com.kl.cmathtutor.repository.inmemory;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
 import ua.com.kl.cmathtutor.domain.entity.User;
 
 class InMemoryUserRepositoryTest extends AbstractCrudInMemoryRepositoryTest<User> {
+
+    private InMemoryUserRepository repository;
 
     @Override
     protected InMemoryUserRepository getRepositoryForTesting() {
@@ -38,6 +49,33 @@ class InMemoryUserRepositoryTest extends AbstractCrudInMemoryRepositoryTest<User
 	User dummyEntity = getDummyEntity();
 	dummyEntity.setEmail("otherUnique");
 	return dummyEntity;
+    }
+
+    @BeforeEach
+    void setUpUserRepository() {
+	repository = getRepositoryForTesting();
+    }
+
+    @Test
+    void whenUserExists_Then_findByEmail_ShouldReturnUserWithEmail() {
+	String email = "email";
+	User user = getDummyEntity();
+	user.setEmail("email");
+	repository.save(user);
+
+	Optional<User> givenUser = repository.findByEmail(email);
+
+	assertTrue(givenUser.isPresent());
+	assertThat(givenUser.get(), is(equalTo(user)));
+    }
+
+    @Test
+    void whenUserNotExist_Then_findByEmail_ShouldReturnEmptyOptional() {
+	String email = "email";
+
+	Optional<User> givenUser = repository.findByEmail(email);
+
+	assertFalse(givenUser.isPresent());
     }
 
 }

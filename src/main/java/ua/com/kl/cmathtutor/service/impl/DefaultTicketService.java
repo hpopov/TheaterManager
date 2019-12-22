@@ -15,6 +15,7 @@ import com.google.common.collect.Multimap;
 
 import lombok.extern.slf4j.Slf4j;
 import ua.com.kl.cmathtutor.config.TicketCalculationConfigProperties;
+import ua.com.kl.cmathtutor.domain.entity.Auditorium;
 import ua.com.kl.cmathtutor.domain.entity.Event;
 import ua.com.kl.cmathtutor.domain.entity.EventPresentation;
 import ua.com.kl.cmathtutor.domain.entity.Rating;
@@ -31,26 +32,32 @@ import ua.com.kl.cmathtutor.service.UserService;
 @Service
 public class DefaultTicketService implements TicketService {
 
-    @Autowired
     private TicketRepository ticketRepository;
-    @Autowired
     private UserService userService;
-    @Autowired
     private DiscountService discountService;
-    @Autowired
     private TicketCalculationConfigProperties ticketCalculationProperties;
+
+    @Autowired
+    public DefaultTicketService(TicketRepository ticketRepository, UserService userService,
+	    DiscountService discountService, TicketCalculationConfigProperties ticketCalculationProperties) {
+	this.ticketRepository = ticketRepository;
+	this.userService = userService;
+	this.discountService = discountService;
+	this.ticketCalculationProperties = ticketCalculationProperties;
+    }
 
     @Override
     public Set<Integer> getAvailableSeatsForEventPresentation(EventPresentation eventPresentation) {
 	Set<Integer> bookedSeatNumbers = getPurchasedTicketsForEventPresentation(eventPresentation).stream()
 		.map(Ticket::getSeatNumber).collect(Collectors.toSet());
-	return IntStream.range(1, eventPresentation.getAuditorium().getNumberOfSeats()).boxed()
+	return IntStream.range(1, eventPresentation.getAuditorium().getNumberOfSeats() + 1).boxed()
 		.filter(seat -> !bookedSeatNumbers.contains(seat)).collect(Collectors.toSet());
     }
 
     @Override
     public List<Ticket> getNewTicketsForEventPresentation(EventPresentation eventPresentation, Set<Integer> seatNumbers)
 	    throws TicketsAlreadyBookedException {
+	assertSpecifiedSeatsExistInAuditorium(seatNumbers, eventPresentation.getAuditorium());
 	assertTicketsForSpecifiedSeatsAreNotBookedAlready(eventPresentation, seatNumbers);
 	List<Ticket> tickets = seatNumbers.stream()
 		.map(seat -> Ticket.builder().eventPresentation(eventPresentation).seatNumber(seat).build())
@@ -58,6 +65,15 @@ public class DefaultTicketService implements TicketService {
 		.collect(Collectors.toList());
 	discountService.applyDiscountToTickets(tickets);
 	return tickets;
+    }
+
+    private void assertSpecifiedSeatsExistInAuditorium(Set<Integer> seatNumbers, Auditorium auditorium) {
+	List<Integer> unexistedSeatNumbers = seatNumbers.stream().filter(seat -> seat > auditorium.getNumberOfSeats())
+		.collect(Collectors.toList());
+	if (unexistedSeatNumbers.size() > 0) {
+	    throw new IllegalArgumentException(String.format("There are no seats within auditory '%s' with number %s",
+		    auditorium.getName(), unexistedSeatNumbers));
+	}
     }
 
     private void assertTicketsForSpecifiedSeatsAreNotBookedAlready(EventPresentation eventPresentation,
@@ -85,6 +101,7 @@ public class DefaultTicketService implements TicketService {
     @Override
     public List<Ticket> getNewTicketsForEventPresentationAndOwner(EventPresentation eventPresentation,
 	    Set<Integer> seatNumbers, User owner) throws TicketsAlreadyBookedException {
+	assertSpecifiedSeatsExistInAuditorium(seatNumbers, eventPresentation.getAuditorium());
 	assertTicketsForSpecifiedSeatsAreNotBookedAlready(eventPresentation, seatNumbers);
 	List<Ticket> tickets = seatNumbers.stream()
 		.map(seat -> Ticket.builder()
@@ -105,11 +122,12 @@ public class DefaultTicketService implements TicketService {
 	tickets.forEach(ticket -> {
 	    seatNumbersByEventPresentation.put(ticket.getEventPresentation(), ticket.getSeatNumber());
 	    ticketsByOwner.put(ticket.getOwner(), ticket);
-	    calculateTicketPrice(ticket);
 	});
 	for (EventPresentation key : seatNumbersByEventPresentation.keySet()) {
+	    assertSpecifiedSeatsExistInAuditorium(seatNumbersByEventPresentation.get(key), key.getAuditorium());
 	    assertTicketsForSpecifiedSeatsAreNotBookedAlready(key, seatNumbersByEventPresentation.get(key));
 	}
+	tickets.forEach(this::calculateTicketPrice);
 	for (User owner : ticketsByOwner.keySet()) {
 	    discountService.applyDiscountToTickets(ticketsByOwner.get(owner));
 	}

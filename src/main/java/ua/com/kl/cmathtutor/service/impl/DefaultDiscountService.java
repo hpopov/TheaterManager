@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import ua.com.kl.cmathtutor.domain.entity.Ticket;
@@ -16,7 +17,7 @@ public class DefaultDiscountService implements DiscountService {
     private Iterable<DiscountStrategy> discountStrategies;
 
     @Autowired
-    public DefaultDiscountService(Iterable<DiscountStrategy> discountStrategies) {
+    public DefaultDiscountService(@Qualifier("discountStrategies") Iterable<DiscountStrategy> discountStrategies) {
 	this.discountStrategies = discountStrategies;
     }
 

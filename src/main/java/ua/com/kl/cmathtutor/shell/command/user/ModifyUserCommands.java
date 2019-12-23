@@ -45,12 +45,13 @@ public class ModifyUserCommands implements CommandMarker {
 		.build());
     }
 
-    @CliAvailabilityIndicator({ "profile edit [FOR AUTHENNTICATED USERS ONLY]" })
+    @CliAvailabilityIndicator({ "profile edit" })
     public boolean isModifyUserCommandsAvailable() {
 	return authenticationState.isAuthenticated();
     }
 
-    @CliCommand(value = "profile edit", help = "Update currently authenticated user data")
+    @CliCommand(value = "profile edit",
+	    help = "Update currently authenticated user data [FOR AUTHENNTICATED USERS ONLY]")
     public String signUp(
 	    @CliOption(key = { "name" }, mandatory = false, help = "First name of the user") final String firstName,
 	    @CliOption(key = { "surname" }, mandatory = false, help = "Last name of the user") final String lastName,

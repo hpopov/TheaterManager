@@ -3,7 +3,6 @@ package ua.com.kl.cmathtutor.domain.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,7 +11,7 @@ import lombok.ToString;
 
 @SuppressWarnings("serial")
 @Data
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class User implements IdContainer, Serializable {

@@ -59,15 +59,12 @@ class DefaultDiscountServiceTest {
     private ArrayList<Ticket> makeThreeDummyTickets() {
 	return Lists.newArrayList(
 		Ticket.builder()
-			.discountInPercent(0d)
 			.calculatedPriceInCents(123L)
 			.build(),
 		Ticket.builder()
-			.discountInPercent(0d)
 			.calculatedPriceInCents(452L)
 			.build(),
 		Ticket.builder()
-			.discountInPercent(0d)
 			.calculatedPriceInCents(9001L)
 			.build());
     }

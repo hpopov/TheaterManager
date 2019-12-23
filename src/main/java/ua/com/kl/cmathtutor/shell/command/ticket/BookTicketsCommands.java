@@ -1,8 +1,8 @@
 package ua.com.kl.cmathtutor.shell.command.ticket;
 
 import java.util.List;
-import java.util.Scanner;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;
@@ -27,15 +27,22 @@ public class BookTicketsCommands implements CommandMarker {
     private TicketService ticketService;
     @Autowired
     private EventPresentationService eventPresentationService;
+    @Autowired
+    private TicketState ticketState;
 
     @CliAvailabilityIndicator({ "ticket book" })
-    public boolean isBookTicketsCommandAvailable() {
+    public boolean isObserveTicketsCommandAvailable() {
 	return true;
     }
 
+    @CliAvailabilityIndicator({ "ticket book-confirm", "ticket book-discard", "ticket book-review" })
+    public boolean isBookTicketsCommandAvailable() {
+	return ticketState.hasTicketToPurchase();
+    }
+
     @CliCommand(value = "ticket book",
-	    help = "Book tickets for the specified event presentation and seats in interactive mode")
-    public String bookTicketsForEventPresentationAndSeats(
+	    help = "Observe tickets for the specified event presentation and seats to be able to book them later")
+    public String observeTicketsForEventPresentationAndSeats(
 	    @CliOption(key = { "event-presentation-id" }, mandatory = true,
 		    help = "EventPresentation id to search available seats for") final int eventPresentationId,
 	    @CliOption(key = { "seats" }, mandatory = true,
@@ -49,27 +56,23 @@ public class BookTicketsCommands implements CommandMarker {
 	} else {
 	    newTickets = ticketService.getNewTicketsForEventPresentation(eventPresentation, seats);
 	}
-	System.out.println(
-		String.format("Ticket details for event %s[%s] which takes place on %s in %s auditorium:",
-			eventPresentation.getEvent().getName(), eventPresentation.getEvent().getId(),
-			eventPresentation.getAirDate(), eventPresentation.getAuditorium().getName()));
-	System.out.print(newTickets.stream()
-		.map(ticket -> String.format("Seat %s, price: %s, discount: %s%%, total: %s\r\n",
-			ticket.getSeatNumber(), formatMoney(ticket.getCalculatedPriceInCents()),
-			ticket.getDiscountInPercent(), formatMoney(ticket.getTotalPriceInCents())))
-		.collect(StringBuilder::new, StringBuilder::append, StringBuilder::append));
-	System.out.println(String.format("====> Total price <====> %s",
-		formatMoney(newTickets.stream().mapToLong(Ticket::getTotalPriceInCents).sum())));
-	System.out.print("Would you like to make a purchase[Y/N]?");
-	Scanner sc = new Scanner(System.in);
-	char answer = sc.next().charAt(0);
-	sc.close();
-	if (isAnswerPositive(answer)) {
-	    long totalPriceInCents = ticketService.bookTickets(newTickets).stream()
-		    .mapToLong(Ticket::getTotalPriceInCents).sum();
-	    return "Your payment of " + formatMoney(totalPriceInCents) + " was carried out successfully";
-	}
-	return "Your booking was discarded successfully";
+	ticketState.setTickets(newTickets);
+	return reviewTickets(eventPresentation, newTickets);
+    }
+
+    private String reviewTickets(EventPresentation eventPresentation, List<Ticket> newTickets) {
+	return String.format("Ticket details for event %s[%s] which takes place on %s in %s auditorium:\r\n",
+		eventPresentation.getEvent().getName(), eventPresentation.getEvent().getId(),
+		eventPresentation.getAirDate(), eventPresentation.getAuditorium().getName()) +
+		newTickets.stream()
+			.map(ticket -> makeTicketRecord(ticket))
+			.collect(StringBuilder::new, StringBuilder::append, StringBuilder::append).toString()
+		+
+		String.format("====> Total price <====> %s\r\n",
+			formatMoney(newTickets.stream().mapToLong(Ticket::getTotalPriceInCents).sum()))
+		+
+		"If you'd like to make a purchase to finish your booking, please, invoke 'ticket book-confirm'. "
+		+ "Otherwise invoke 'ticket book-discard'.";
     }
 
     private String formatMoney(long moneyInUsdCents) {
@@ -78,7 +81,39 @@ public class BookTicketsCommands implements CommandMarker {
 	return dollars + "." + cents + "$";
     }
 
-    private boolean isAnswerPositive(char answer) {
-	return answer == 'y' || answer == 'Y';
+    private String makeTicketRecord(Ticket ticket) {
+	return String.format("Seat %s, price: %s, discount: %s%%, total: %s\r\n",
+		ticket.getSeatNumber(), formatMoney(ticket.getCalculatedPriceInCents()),
+		ticket.getDiscountInPercent(), formatMoney(ticket.getTotalPriceInCents()));
+    }
+
+    @CliCommand(value = "ticket book-confirm",
+	    help = "Confirm tickets booking, which was observed during the last 'ticket book' command invokation")
+    public String bookTicketsFromState() throws TicketsAlreadyBookedException {
+	long totalPriceInCents = ticketService
+		.bookTickets(ticketState.getTickets().stream().peek(this::refreshOwner).collect(Collectors.toList()))
+		.stream()
+		.mapToLong(Ticket::getTotalPriceInCents).sum();
+	ticketState.setTickets(null);
+	return "Your payment of " + formatMoney(totalPriceInCents) + " was carried out successfully";
+    }
+
+    private void refreshOwner(Ticket ticket) {
+	ticket.setOwner(authenticationState.getAuthenticatedUser());
+    }
+
+    @CliCommand(value = "ticket book-discard",
+	    help = "Book tickets, which was observed during the last 'ticket book' command invokation")
+    public String discardTicketsBookingFromState() {
+	ticketState.setTickets(null);
+	return "Your booking was discarded successfully";
+    }
+
+    @CliCommand(value = "ticket book-review",
+	    help = "View tickets, which was selected during the last 'ticket book' command invokation")
+    public String reviewTicketsBookingFromState() {
+	List<Ticket> tickets = ticketState.getTickets();
+	tickets.forEach(this::refreshOwner);
+	return reviewTickets(tickets.get(0).getEventPresentation(), tickets);
     }
 }

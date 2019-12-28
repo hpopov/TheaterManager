@@ -15,7 +15,7 @@ import ua.com.kl.cmathtutor.shell.type.CustomDate;
 @Component
 public class CustomDateConverter implements Converter<CustomDate> {
 
-    public static final String DATE_FORMAT = "dd-mm-yyyy";
+    public static final String DATE_FORMAT = "dd-MM-yyyy";
 
     private DateFormat dateFormat;
 

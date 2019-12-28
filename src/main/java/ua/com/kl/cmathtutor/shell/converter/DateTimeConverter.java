@@ -16,7 +16,7 @@ import ua.com.kl.cmathtutor.shell.type.DateTime;
 @Component
 public class DateTimeConverter implements Converter<DateTime> {
 
-    public static final String FORMAT = "dd-mm-yyyy HH:mm:ss";
+    public static final String FORMAT = "dd-MM-yyyy HH:mm:ss";
     private DateFormat dateFormat;
 
     public DateTimeConverter() {

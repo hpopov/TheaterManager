@@ -9,18 +9,22 @@ import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliAvailabilityIndicator;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
+import org.springframework.shell.support.util.OsUtils;
 import org.springframework.stereotype.Component;
 
 import ua.com.kl.cmathtutor.domain.entity.Auditorium;
 import ua.com.kl.cmathtutor.domain.entity.Event;
 import ua.com.kl.cmathtutor.domain.entity.EventPresentation;
 import ua.com.kl.cmathtutor.domain.entity.Rating;
-import ua.com.kl.cmathtutor.exception.NotFoundException;
 import ua.com.kl.cmathtutor.service.AuditoriumService;
 import ua.com.kl.cmathtutor.service.EventPresentationService;
 import ua.com.kl.cmathtutor.service.EventService;
+import ua.com.kl.cmathtutor.shell.command.ExceptionWrapperUtils;
 import ua.com.kl.cmathtutor.shell.command.auth.AuthenticationState;
+import ua.com.kl.cmathtutor.shell.converter.DateTimeConverter;
+import ua.com.kl.cmathtutor.shell.converter.DurationConverter;
 import ua.com.kl.cmathtutor.shell.type.DateTime;
+import ua.com.kl.cmathtutor.shell.type.Duration;
 
 @Component
 public class EventCommands implements CommandMarker {
@@ -61,21 +65,25 @@ public class EventCommands implements CommandMarker {
 
     @CliCommand(value = "event all-presentations", help = "View list of all available event presentations")
     public String getAllEventPresentations() {
-	return "Currently available presentations are:\r\n" +
-		eventPresentationService.getAll().stream()
-			.map(ep -> "EventPresentation" + "[" + ep.getId() + "]: event '" + ep.getEvent().getName()
-				+ "'[" + ep.getEvent().getId() + "] airDate: " + ep.getAirDate() + " auditorium "
-				+ ep.getAuditorium().getName())
-			.map(str -> str + "\r\n").collect(StringBuilder::new,
+	return "Currently available presentations are:" + OsUtils.LINE_SEPARATOR
+		+ eventPresentationService.getAll().stream()
+			.map(ep -> String.format(
+				"EventPresentation[%s]: event: '%s'[%s], airDate: %s, duration: %sh %sm, auditorium: '%s'",
+				ep.getId(), ep.getEvent().getName(), ep.getEvent().getId(), ep.getAirDate(),
+				ep.getDurationInMilliseconds() / DurationConverter.MILLIESECONDS_PER_HOUR,
+				(ep.getDurationInMilliseconds() % DurationConverter.MILLIESECONDS_PER_HOUR)
+					/ DurationConverter.MILLIESECONDS_PER_MINUTE,
+				ep.getAuditorium().getName()))
+			.map(str -> str + OsUtils.LINE_SEPARATOR).collect(StringBuilder::new,
 				StringBuilder::append, StringBuilder::append);
     }
 
     @CliCommand(value = "event all", help = "View list of all available events")
     public String getAllEvents() {
-	return "Currently available events are:\r\n" +
+	return "Currently available events are:" + OsUtils.LINE_SEPARATOR +
 		eventService.getAll().stream()
 			.map(Object::toString)
-			.map(str -> str + "\r\n").collect(StringBuilder::new,
+			.map(str -> str + OsUtils.LINE_SEPARATOR).collect(StringBuilder::new,
 				StringBuilder::append, StringBuilder::append);
     }
 
@@ -92,22 +100,24 @@ public class EventCommands implements CommandMarker {
 
     @CliCommand(value = "event present",
 	    help = "Create event presentation for specified event id [FOR ADMIN USAGE ONLY]")
-    public EventPresentation createEventPresentation(
+    public String createEventPresentation(
 	    @CliOption(key = { "eventId" }, mandatory = true, help = "Id of the event to present") final int eventId,
 	    @CliOption(key = {
 		    "auditorium" }, mandatory = true, help = "Name of the auditorium") final String auditoriumName,
 	    @CliOption(key = {
 		    "airDate" }, mandatory = true,
-		    help = "Air date in dd-mm-yyyy HH-mm-ss format") final DateTime airDateTime,
+		    help = "Air date in '" + DateTimeConverter.FORMAT + "' format") final DateTime airDateTime,
 	    @CliOption(key = {
-		    "durationInMilliseconds" }, mandatory = true,
-		    help = "Duration of presentation in millis. Default is 1 hour",
-		    specifiedDefaultValue = "3600000") final long durationInMilliseconds)
-	    throws NotFoundException {
-	Auditorium auditorium = auditoriumService.getByName(auditoriumName);
-	Event event = eventService.getById(eventId);
-	return eventPresentationService
-		.create(EventPresentation.builder().airDate(airDateTime.getDate()).auditorium(auditorium)
-			.durationInMilliseconds(durationInMilliseconds).event(event).build());
+		    "duration" }, mandatory = false,
+		    help = "Duration of presentation in format'" + DurationConverter.FORMAT + "'. Default is 1 hour",
+		    unspecifiedDefaultValue = "01:00") final Duration duration) {
+	return ExceptionWrapperUtils.handleException(() -> {
+	    Auditorium auditorium = auditoriumService.getByName(auditoriumName);
+	    Event event = eventService.getById(eventId);
+	    return eventPresentationService
+		    .create(EventPresentation.builder().airDate(airDateTime.getDate()).auditorium(auditorium)
+			    .durationInMilliseconds(duration.getDurationInMilliseconds()).event(event).build())
+		    .toString();
+	});
     }
 }

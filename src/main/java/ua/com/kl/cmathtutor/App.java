@@ -1,18 +1,19 @@
 package ua.com.kl.cmathtutor;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.shell.Bootstrap;
 
 public class App {
 
     public static void main(String[] args) throws IOException {
-	ConfigurableApplicationContext ctx = new AnnotationConfigApplicationContext(SpringConfiguraion.class);
-	System.out.println(Arrays.asList(ctx.getBeanDefinitionNames()));
-	System.out.println(ctx.getBean("auditoriums"));
-	ctx.close();
+	List<String> argsList = new ArrayList<String>(Arrays.asList(args));
+	argsList.add("--disableInternalCommands");
+	String[] argsArray = argsList.toArray(new String[0]);
+	Bootstrap.main(argsArray);
     }
 
 }

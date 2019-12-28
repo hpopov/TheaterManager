@@ -3,7 +3,6 @@ package ua.com.kl.cmathtutor.shell.converter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.shell.core.Completion;
@@ -11,32 +10,32 @@ import org.springframework.shell.core.Converter;
 import org.springframework.shell.core.MethodTarget;
 import org.springframework.stereotype.Component;
 
-import ua.com.kl.cmathtutor.shell.type.DateTime;
+import ua.com.kl.cmathtutor.shell.type.CustomDate;
 
 @Component
-public class DateTimeConverter implements Converter<DateTime> {
+public class CustomDateConverter implements Converter<CustomDate> {
 
-    public static final String FORMAT = "dd-MM-yyyy HH:mm:ss";
+    public static final String DATE_FORMAT = "dd-MM-yyyy";
+
     private DateFormat dateFormat;
 
-    public DateTimeConverter() {
-	dateFormat = new SimpleDateFormat(FORMAT);
+    public CustomDateConverter() {
+	dateFormat = new SimpleDateFormat(DATE_FORMAT);
     }
 
     @Override
     public boolean supports(Class<?> type, String optionContext) {
-	return DateTime.class.isAssignableFrom(type);
+	return CustomDate.class.isAssignableFrom(type);
     }
 
     @Override
-    public DateTime convertFromText(String value, Class<?> targetType, String optionContext) {
-	Date date;
+    public CustomDate convertFromText(String value, Class<?> targetType, String optionContext) {
 	try {
-	    date = dateFormat.parse(value);
+	    return CustomDate.of(dateFormat.parse(value));
 	} catch (ParseException e) {
-	    throw new IllegalArgumentException("Unable to parse datetime with format " + FORMAT);
+	    throw new IllegalArgumentException(
+		    "Unable to convert " + value + " to custom date using format " + DATE_FORMAT);
 	}
-	return DateTime.of(date);
     }
 
     @Override
@@ -44,5 +43,4 @@ public class DateTimeConverter implements Converter<DateTime> {
 	    String optionContext, MethodTarget target) {
 	return false;
     }
-
 }

@@ -1,1 +1,2 @@
-target\appassembler\bin\app.bat
+call target\appassembler\bin\app.bat
+pause

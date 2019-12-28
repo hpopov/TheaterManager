@@ -11,11 +11,12 @@ import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliAvailabilityIndicator;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
+import org.springframework.shell.support.util.OsUtils;
 import org.springframework.stereotype.Component;
 
 import ua.com.kl.cmathtutor.domain.entity.User;
-import ua.com.kl.cmathtutor.exception.NotFoundException;
 import ua.com.kl.cmathtutor.service.UserService;
+import ua.com.kl.cmathtutor.shell.command.ExceptionWrapperUtils;
 import ua.com.kl.cmathtutor.shell.command.auth.AuthenticationState;
 
 @Component
@@ -58,8 +59,7 @@ public class ModifyUserCommands implements CommandMarker {
 	    @CliOption(key = { "password" }, mandatory = false, help = "User password") final String password,
 	    @CliOption(key = {
 		    "birthday" }, mandatory = false,
-		    help = "User birth date in dd-mm-yyyy format") final Date birthdayDate)
-	    throws NotFoundException {
+		    help = "User birth date in dd-mm-yyyy format") final Date birthdayDate) {
 	if (Objects.isNull(firstName) && Objects.isNull(lastName) && Objects.isNull(password)
 		&& Objects.isNull(birthdayDate)) {
 	    return "No fields to update was specified. Nothing to do...";
@@ -77,7 +77,9 @@ public class ModifyUserCommands implements CommandMarker {
 	if (Objects.nonNull(birthdayDate)) {
 	    user.setBirthdayDate(birthdayDate);
 	}
-	user = userService.updateById(user.getId(), user);
-	return "Currently authenticated user was updated:\r\n" + user;
+	return ExceptionWrapperUtils.handleException(() -> {
+	    User updatedUser = userService.updateById(user.getId(), user);
+	    return "Currently authenticated user was updated:" + OsUtils.LINE_SEPARATOR + updatedUser;
+	});
     }
 }

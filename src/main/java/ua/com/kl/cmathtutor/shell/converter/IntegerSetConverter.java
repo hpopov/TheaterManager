@@ -15,7 +15,7 @@ import com.google.common.collect.Sets;
 @Component
 public class IntegerSetConverter implements Converter<Set<Integer>> {
 
-    private static final String SET_VALUE_PATTERN = "\\d{1,6}(,\\d{1,6})+";
+    private static final String SET_VALUE_PATTERN = "\\d{1,6}(,\\d{1,6})*";
 
     @Override
     public boolean supports(Class<?> type, String optionContext) {

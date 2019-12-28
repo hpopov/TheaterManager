@@ -1,7 +1,5 @@
 package ua.com.kl.cmathtutor.shell.command.auth;
 
-import java.util.Date;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliAvailabilityIndicator;
@@ -10,8 +8,10 @@ import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Component;
 
 import ua.com.kl.cmathtutor.domain.entity.User;
-import ua.com.kl.cmathtutor.exception.NotFoundException;
 import ua.com.kl.cmathtutor.service.UserService;
+import ua.com.kl.cmathtutor.shell.command.ExceptionWrapperUtils;
+import ua.com.kl.cmathtutor.shell.converter.CustomDateConverter;
+import ua.com.kl.cmathtutor.shell.type.CustomDate;
 
 @Component
 public class AuthenticationCommands implements CommandMarker {
@@ -43,9 +43,11 @@ public class AuthenticationCommands implements CommandMarker {
 	    @CliOption(key = { "email" }, mandatory = true, help = "User email (is used as login)") final String email,
 	    @CliOption(key = { "password" }, mandatory = true, help = "User password") final String password,
 	    @CliOption(key = {
-		    "birthday" }, mandatory = true, help = "User birth date in dd-mm-yyyy format") final Date birthdayDate) {
+		    "birthday" }, mandatory = true,
+		    help = "User birth date in '" + CustomDateConverter.DATE_FORMAT
+			    + "' format") final CustomDate birthdayDate) {
 	User registeredUser = userService.create(User.builder()
-		.birthdayDate(birthdayDate)
+		.birthdayDate(birthdayDate.getDate())
 		.email(email)
 		.firstName(firstName)
 		.lastName(lastName)
@@ -59,17 +61,14 @@ public class AuthenticationCommands implements CommandMarker {
     public String signIn(
 	    @CliOption(key = { "email" }, mandatory = true, help = "User email (is used as login)") final String email,
 	    @CliOption(key = { "password" }, mandatory = true, help = "User password") final String password) {
-	User user;
-	try {
-	    user = userService.getByEmail(email);
-	} catch (NotFoundException e) {
-	    return e.getMessage();
-	}
-	if (password.equals(user.getPassword())) {
-	    authenticationState.setAuthenticatedUser(user);
-	    return "User with email " + email + " logged in successfully.";
-	}
-	return "Incorrect password for user with email " + email + ".";
+	return ExceptionWrapperUtils.handleException(() -> {
+	    User user = userService.getByEmail(email);
+	    if (password.equals(user.getPassword())) {
+		authenticationState.setAuthenticatedUser(user);
+		return "User with email " + email + " logged in successfully.";
+	    }
+	    return "Incorrect password for user with email " + email + ".";
+	});
     }
 
     @CliCommand(value = "auth log-out", help = "Log user out")

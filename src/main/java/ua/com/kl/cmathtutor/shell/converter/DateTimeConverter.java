@@ -16,16 +16,16 @@ import ua.com.kl.cmathtutor.shell.type.DateTime;
 @Component
 public class DateTimeConverter implements Converter<DateTime> {
 
-    private static final String DATETIME_FORMAT = "dd-mm-yyyy HH:mm:ss";
+    public static final String FORMAT = "dd-mm-yyyy HH:mm:ss";
     private DateFormat dateFormat;
 
     public DateTimeConverter() {
-	dateFormat = new SimpleDateFormat(DATETIME_FORMAT);
+	dateFormat = new SimpleDateFormat(FORMAT);
     }
 
     @Override
     public boolean supports(Class<?> type, String optionContext) {
-	return Date.class.isAssignableFrom(type);
+	return DateTime.class.isAssignableFrom(type);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class DateTimeConverter implements Converter<DateTime> {
 	try {
 	    date = dateFormat.parse(value);
 	} catch (ParseException e) {
-	    throw new IllegalArgumentException("Unable to parse date with format " + DATETIME_FORMAT);
+	    throw new IllegalArgumentException("Unable to parse datetime with format " + FORMAT);
 	}
 	return DateTime.of(date);
     }

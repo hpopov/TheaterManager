@@ -81,7 +81,8 @@ public class DefaultTicketService implements TicketService {
 	Set<Integer> occupiedSeatNumbers = getPurchasedTicketsForEventPresentation(eventPresentation).stream()
 		.map(Ticket::getSeatNumber).filter(seatNumbers::contains).collect(Collectors.toSet());
 	if (!occupiedSeatNumbers.isEmpty()) {
-	    throw new TicketsAlreadyBookedException();
+	    throw new TicketsAlreadyBookedException(
+		    String.format("Tickets for seats %s are already booked", occupiedSeatNumbers));
 	}
     }
 

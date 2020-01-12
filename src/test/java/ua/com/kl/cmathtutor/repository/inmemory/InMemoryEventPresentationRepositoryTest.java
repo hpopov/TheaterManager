@@ -63,12 +63,12 @@ class InMemoryEventPresentationRepositoryTest extends AbstractCrudInMemoryReposi
 	super.whenEntityExists_Then_delete_ShouldReturnTrueAndDeleteEntity();
     }
 
-    @Test
-    @Override
-    void whenEntityExists_Then_deleteById_ShouldReturnTrueAndDeleteEntity() {
-	stubSaveMethodForEventRepository();
-	super.whenEntityExists_Then_deleteById_ShouldReturnTrueAndDeleteEntity();
-    }
+//    @Test
+//    @Override
+//    void whenEntityExists_Then_deleteById_ShouldReturnTrueAndDeleteEntity() {
+//	stubSaveMethodForEventRepository();
+//	super.whenEntityExists_Then_deleteById_ShouldReturnTrueAndDeleteEntity();
+//    }
 
     @Test
     @Override

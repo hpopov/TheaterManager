@@ -10,7 +10,7 @@ import com.google.common.collect.Range;
 import ua.com.kl.cmathtutor.domain.entity.Auditorium;
 import ua.com.kl.cmathtutor.domain.entity.EventPresentation;
 import ua.com.kl.cmathtutor.exception.NotFoundException;
-import ua.com.kl.cmathtutor.repository.CreateReadUpdateRepository;
+import ua.com.kl.cmathtutor.repository.CrudRepository;
 import ua.com.kl.cmathtutor.repository.EventPresentationRepository;
 import ua.com.kl.cmathtutor.service.AbstractCreateReadUpdateService;
 import ua.com.kl.cmathtutor.service.EventPresentationService;
@@ -63,7 +63,7 @@ public class DefaultEventPresentationService extends AbstractCreateReadUpdateSer
     }
 
     @Override
-    protected CreateReadUpdateRepository<EventPresentation> getRepository() {
+    protected CrudRepository<EventPresentation> getRepository() {
 	return eventPresentationRepository;
     }
 

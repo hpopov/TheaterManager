@@ -55,4 +55,9 @@ public class InMemoryTicketRepository extends AbstractRefreshableCrudInMemoryRep
 	return ticket;
     }
 
+    @Override
+    public boolean delete(Ticket entity) {
+	throw new UnsupportedOperationException("Delete ticket operation is unsupported for this implementation!");
+    }
+
 }

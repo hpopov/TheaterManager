@@ -147,4 +147,5 @@ class InMemoryEventPresentationRepositoryTest extends AbstractCrudInMemoryReposi
 			.build(),
 		getDummyEntity());
     }
+
 }

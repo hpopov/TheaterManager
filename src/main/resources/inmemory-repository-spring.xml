@@ -4,13 +4,6 @@
  		http://www.springframework.org/schema/beans
  		http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
 
-	<!-- <bean id="abstractCrudInMemoryRepository" abstract="true" -->
-	<!-- class="ua.com.kl.cmathtutor.repository.inmemory.AbstractCrudInMemoryRepository"> -->
-	<!-- </bean> -->
-	<!-- <alias name="inMemoryUserRepository" alias="userRepository" /> -->
-	<!-- <alias name="inMemoryEventRepository" alias="eventRepository" /> -->
-	<!-- <alias name="inMemoryEventPresentationRepository" alias="eventPresentationRepository" /> -->
-
 	<bean id="inMemoryUserRepository" class="ua.com.kl.cmathtutor.repository.inmemory.InMemoryUserRepository" />
 	<!-- <bean id="userModel" class="ua.com.kl.cmathtutor.domain.entity.User" scope="prototype"></bean> -->
 	<bean id="inMemoryEventRepository" class="ua.com.kl.cmathtutor.repository.inmemory.InMemoryEventRepository" />
@@ -21,6 +14,10 @@
 	<bean id="inMemoryTicketRepository" class="ua.com.kl.cmathtutor.repository.inmemory.InMemoryTicketRepository">
 		<property name="userRepository" ref="inMemoryUserRepository"></property>
 		<property name="eventPresentationRepository" ref="inMemoryEventPresentationRepository"></property>
+	</bean>
+	<bean id="inMemoryEventCounterRepository"
+		class="ua.com.kl.cmathtutor.repository.inmemory.InMemoryEventCounterRepository">
+		<property name="eventRepository" ref="inMemoryEventRepository"></property>
 	</bean>
 
 </beans>

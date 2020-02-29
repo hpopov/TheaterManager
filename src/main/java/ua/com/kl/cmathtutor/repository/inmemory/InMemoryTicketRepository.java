@@ -1,6 +1,9 @@
 package ua.com.kl.cmathtutor.repository.inmemory;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import lombok.Setter;
 import ua.com.kl.cmathtutor.domain.entity.EventPresentation;
@@ -12,7 +15,7 @@ import ua.com.kl.cmathtutor.repository.EventPresentationRepository;
 import ua.com.kl.cmathtutor.repository.TicketRepository;
 import ua.com.kl.cmathtutor.repository.UserRepository;
 
-public class InMemoryTicketRepository extends AbstractRefreshableCrudInMemoryRepository<Ticket>
+public class InMemoryTicketRepository extends AbstractCrudInMemoryRepository<Ticket>
 	implements TicketRepository {
 
     private static final String INVALID_ATTRIBUTE_MESSAGE = "Entity for attribute [%s] in ticket with id %s does not exist";
@@ -44,7 +47,16 @@ public class InMemoryTicketRepository extends AbstractRefreshableCrudInMemoryRep
     }
 
     @Override
-    protected Ticket refresh(Ticket ticket) {
+    public List<Ticket> findAll() {
+	return super.findAll().stream().map(this::refreshEntityReferences).collect(Collectors.toList());
+    }
+
+    @Override
+    public Optional<Ticket> findById(Integer id) {
+	return super.findById(id).map(this::refreshEntityReferences);
+    }
+
+    private Ticket refreshEntityReferences(Ticket ticket) {
 	EventPresentation eventPresentation = eventPresentationRepository
 		.findById(ticket.getEventPresentation().getId()).get();
 	ticket.setEventPresentation(eventPresentation);
@@ -53,6 +65,11 @@ public class InMemoryTicketRepository extends AbstractRefreshableCrudInMemoryRep
 	    ticket.setOwner(owner);
 	}
 	return ticket;
+    }
+
+    @Override
+    public boolean delete(Ticket entity) {
+	throw new UnsupportedOperationException("Delete ticket operation is unsupported for this implementation!");
     }
 
 }

@@ -14,8 +14,9 @@ import ua.com.kl.cmathtutor.repository.inmemory.InMemoryRepositoryConfiguration;
 import ua.com.kl.cmathtutor.service.strategy.DiscountStrategy;
 
 @Configuration
-@Import(value = InMemoryRepositoryConfiguration.class)
+@Import(InMemoryRepositoryConfiguration.class)
 @ImportResource(locations = "classpath:auditorium-spring.xml")
+//TODO: what if include automatically only base configurations? within configuration choose implementations (i.e. DAO)
 @ComponentScan
 public class SpringConfiguraion {
 

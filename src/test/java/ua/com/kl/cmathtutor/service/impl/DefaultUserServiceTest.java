@@ -1,10 +1,10 @@
 package ua.com.kl.cmathtutor.service.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.ArgumentMatchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.Date;
@@ -21,7 +21,7 @@ import com.google.common.collect.Lists;
 
 import ua.com.kl.cmathtutor.domain.entity.User;
 import ua.com.kl.cmathtutor.exception.NotFoundException;
-import ua.com.kl.cmathtutor.repository.CreateReadUpdateRepository;
+import ua.com.kl.cmathtutor.repository.CrudRepository;
 import ua.com.kl.cmathtutor.repository.UserRepository;
 import ua.com.kl.cmathtutor.service.AbstractCreateReadUpdateService;
 
@@ -38,7 +38,7 @@ class DefaultUserServiceTest extends AbstractCreateReadUpdateServiceTest<User> {
     }
 
     @Override
-    protected CreateReadUpdateRepository<User> getMockedRepository() {
+    protected CrudRepository<User> getMockedRepository() {
 	return userRepository;
     }
 

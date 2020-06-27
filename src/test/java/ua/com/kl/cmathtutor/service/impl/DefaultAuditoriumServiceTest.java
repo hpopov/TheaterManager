@@ -17,43 +17,42 @@ import com.google.common.collect.Sets;
 
 import ua.com.kl.cmathtutor.domain.entity.Auditorium;
 import ua.com.kl.cmathtutor.exception.NotFoundException;
-import ua.com.kl.cmathtutor.service.impl.DefaultAuditoriumService;
 
 class DefaultAuditoriumServiceTest {
 
-    DefaultAuditoriumService service;
+	DefaultAuditoriumService service;
 
-    private List<Auditorium> auditoriums;
+	private List<Auditorium> auditoriums;
 
-    @BeforeEach
-    void initialize() {
-	auditoriums = Lists.newArrayList(
-		Auditorium.builder().name("1").numberOfSeats(12).vipSeats(Sets.newHashSet(1, 2, 3)).build(),
-		Auditorium.builder().name("2").numberOfSeats(6).vipSeats(Sets.newHashSet(5, 6)).build());
-	service = new DefaultAuditoriumService(auditoriums);
-    }
+	@BeforeEach
+	void initialize() {
+		auditoriums = Lists.newArrayList(
+				Auditorium.builder().name("1").numberOfSeats(12).vipSeats(Sets.newHashSet(1, 2, 3)).build(),
+				Auditorium.builder().name("2").numberOfSeats(6).vipSeats(Sets.newHashSet(5, 6)).build());
+		service = new DefaultAuditoriumService(auditoriums);
+	}
 
-    @Test
-    void getAll_ShouldReturnAllAuditoriums() {
-	List<Auditorium> allAuditoriums = service.getAll();
+	@Test
+	void getAll_ShouldReturnAllAuditoriums() {
+		List<Auditorium> allAuditoriums = service.getAll();
 
-	assertThat(allAuditoriums, containsInAnyOrder(auditoriums.toArray()));
-    }
+		assertThat(allAuditoriums, containsInAnyOrder(auditoriums.toArray()));
+	}
 
-    @Test
-    void whenAuditoriumIsPresent_Then_getByName_ShouldReturnAuditoriumWithName() throws NotFoundException {
-	String existedName = "2";
+	@Test
+	void whenAuditoriumIsPresent_Then_getByName_ShouldReturnAuditoriumWithName() throws NotFoundException {
+		String existedName = "2";
 
-	Auditorium byName = service.getByName(existedName);
+		Auditorium byName = service.getByName(existedName);
 
-	assertNotNull(byName);
-	assertThat(byName.getName(), is(equalTo(existedName)));
-    }
+		assertNotNull(byName);
+		assertThat(byName.getName(), is(equalTo(existedName)));
+	}
 
-    @Test
-    void whenAuditoriumIsAbssent_Then_getByName_ShouldThrowAnException() throws NotFoundException {
-	String notExistedName = "notExistedName";
+	@Test
+	void whenAuditoriumIsAbssent_Then_getByName_ShouldThrowAnException() throws NotFoundException {
+		String notExistedName = "notExistedName";
 
-	assertThrows(NotFoundException.class, () -> service.getByName(notExistedName));
-    }
+		assertThrows(NotFoundException.class, () -> service.getByName(notExistedName));
+	}
 }

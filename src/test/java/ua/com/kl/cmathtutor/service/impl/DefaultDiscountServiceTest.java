@@ -23,7 +23,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.google.common.collect.Lists;
 
 import ua.com.kl.cmathtutor.domain.entity.Ticket;
-import ua.com.kl.cmathtutor.service.impl.DefaultDiscountService;
 import ua.com.kl.cmathtutor.service.strategy.DiscountStrategy;
 
 @ExtendWith(MockitoExtension.class)

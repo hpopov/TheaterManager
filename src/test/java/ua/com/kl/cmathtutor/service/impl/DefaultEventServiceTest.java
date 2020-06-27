@@ -9,7 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.google.common.collect.Lists;
 
 import ua.com.kl.cmathtutor.domain.entity.Event;
-import ua.com.kl.cmathtutor.repository.CreateReadUpdateRepository;
+import ua.com.kl.cmathtutor.repository.CrudRepository;
 import ua.com.kl.cmathtutor.repository.EventRepository;
 import ua.com.kl.cmathtutor.service.AbstractCreateReadUpdateService;
 
@@ -25,7 +25,7 @@ class DefaultEventServiceTest extends AbstractCreateReadUpdateServiceTest<Event>
     }
 
     @Override
-    protected CreateReadUpdateRepository<Event> getMockedRepository() {
+    protected CrudRepository<Event> getMockedRepository() {
 	return eventRepository;
     }
 

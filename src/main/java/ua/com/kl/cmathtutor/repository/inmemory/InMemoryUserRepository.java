@@ -31,7 +31,7 @@ public class InMemoryUserRepository extends AbstractCrudInMemoryRepository<User>
 		.count();
 	if (usersWithSameEmailCount != 0) {
 	    throw new DuplicateKeyException(String.format(
-		    "User email has to be unique, but found %s users with same email", usersWithSameEmailCount));
+		    "User email has to be unique, but found %s other users with same email", usersWithSameEmailCount));
 	}
 	if (Objects.isNull(entity.getPassword())) {
 	    throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "password"));

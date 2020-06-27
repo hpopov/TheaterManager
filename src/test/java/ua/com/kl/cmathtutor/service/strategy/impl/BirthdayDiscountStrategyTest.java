@@ -60,8 +60,8 @@ class BirthdayDiscountStrategyTest extends AbstractDiscountStrategyTest {
 
 	    @Override
 	    public void accept(Calendar t) {
-		t.add(Calendar.YEAR, shift);
 		t.add(Calendar.DAY_OF_YEAR, shift);
+		t.add(Calendar.YEAR, shift);
 		++shift;
 	    }
 

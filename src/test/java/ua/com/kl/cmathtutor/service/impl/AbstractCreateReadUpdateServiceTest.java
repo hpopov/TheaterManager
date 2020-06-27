@@ -22,13 +22,13 @@ import org.mockito.internal.stubbing.answers.ReturnsArgumentAt;
 
 import ua.com.kl.cmathtutor.domain.entity.IdContainer;
 import ua.com.kl.cmathtutor.exception.NotFoundException;
-import ua.com.kl.cmathtutor.repository.CreateReadUpdateRepository;
+import ua.com.kl.cmathtutor.repository.CrudRepository;
 import ua.com.kl.cmathtutor.service.AbstractCreateReadUpdateService;
 
 abstract class AbstractCreateReadUpdateServiceTest<T extends IdContainer> {
 
     private AbstractCreateReadUpdateService<T> service;
-    private CreateReadUpdateRepository<T> repository;
+    private CrudRepository<T> repository;
 
     @BeforeEach
     void setUpAbstract() {
@@ -38,7 +38,7 @@ abstract class AbstractCreateReadUpdateServiceTest<T extends IdContainer> {
 
     protected abstract AbstractCreateReadUpdateService<T> getServiceForTest();
 
-    protected abstract CreateReadUpdateRepository<T> getMockedRepository();
+    protected abstract CrudRepository<T> getMockedRepository();
 
     @Test
     void create_ShouldSetNullIdForEntityAndSaveItUsingRepository() {

@@ -128,18 +128,18 @@ abstract public class AbstractCrudInMemoryRepositoryTest<T extends Serializable 
 
     public abstract List<T> getAllEntities();
 
-    @Test
-    void whenEntityExists_Then_deleteById_ShouldReturnTrueAndDeleteEntity() {
-	T entity = repository.save(getDummyEntity());
-
-	assertAll(() -> assertTrue(repository.deleteById(entity.getId())),
-		() -> assertFalse(repository.findById(entity.getId()).isPresent()));
-    }
-
-    @Test
-    void whenEntityNotExists_Then_deleteById_ShouldReturnFalse() {
-	assertFalse(repository.deleteById(123));
-    }
+//    @Test
+//    void whenEntityExists_Then_deleteById_ShouldReturnTrueAndDeleteEntity() {
+//	T entity = repository.save(getDummyEntity());
+//
+//	assertAll(() -> assertTrue(repository.deleteById(entity.getId())),
+//		() -> assertFalse(repository.findById(entity.getId()).isPresent()));
+//    }
+//
+//    @Test
+//    void whenEntityNotExists_Then_deleteById_ShouldReturnFalse() {
+//	assertFalse(repository.deleteById(123));
+//    }
 
     @Test
     void whenEntityExists_Then_delete_ShouldReturnTrueAndDeleteEntity() {

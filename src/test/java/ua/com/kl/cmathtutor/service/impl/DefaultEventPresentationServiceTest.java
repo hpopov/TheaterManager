@@ -1,9 +1,9 @@
 package ua.com.kl.cmathtutor.service.impl;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.only;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Date;
 import java.util.List;
@@ -18,7 +18,7 @@ import com.google.common.collect.Lists;
 
 import ua.com.kl.cmathtutor.domain.entity.Auditorium;
 import ua.com.kl.cmathtutor.domain.entity.EventPresentation;
-import ua.com.kl.cmathtutor.repository.CreateReadUpdateRepository;
+import ua.com.kl.cmathtutor.repository.CrudRepository;
 import ua.com.kl.cmathtutor.repository.EventPresentationRepository;
 import ua.com.kl.cmathtutor.service.AbstractCreateReadUpdateService;
 
@@ -36,7 +36,7 @@ class DefaultEventPresentationServiceTest extends AbstractCreateReadUpdateServic
     }
 
     @Override
-    protected CreateReadUpdateRepository<EventPresentation> getMockedRepository() {
+    protected CrudRepository<EventPresentation> getMockedRepository() {
 	return eventPresentationRepository;
     }
 

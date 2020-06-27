@@ -61,13 +61,14 @@ public abstract class AbstractCrudInMemoryRepository<T extends IdContainer & Ser
 
     protected abstract void checkMandatoryAttributes(T entity);
 
-    public boolean deleteById(Integer id) {
+    private boolean deleteById(Integer id) {
 	if (Objects.isNull(id)) {
 	    return false;
 	}
 	return entitiesById.remove(id) == null ? false : true;
     }
 
+    @Override
     public boolean delete(T entity) {
 	return deleteById(entity.getId());
     }

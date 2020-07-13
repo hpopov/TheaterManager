@@ -11,11 +11,11 @@ public class TheaterPromptProvider extends DefaultPromptProvider {
 
     @Override
     public String getPrompt() {
-	return "theater>";
+        return "theater>";
     }
 
     @Override
     public String getProviderName() {
-	return "Theater Manager";
+        return "Theater Manager";
     }
 }

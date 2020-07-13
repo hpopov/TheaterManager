@@ -26,44 +26,46 @@ public class ViewTicketCommands implements CommandMarker {
 
     @CliAvailabilityIndicator({ "ticket available" })
     public boolean isGetAvailableTicketsForEventPresentationCommandAvailable() {
-	return true;
+        return true;
     }
 
     @CliAvailabilityIndicator({ "ticket purchased" })
     public boolean isGetPurchasedTicketsForEventPresentationCommandAvailable() {
-	return authenticationState.isAdminAuthenticated();
+        return authenticationState.isAdminAuthenticated();
     }
 
     @CliCommand(value = "ticket available",
-	    help = "View list of all available seats for the specified event presentation")
+        help = "View list of all available seats for the specified event presentation")
     public String getAllAvailableTicketsForEventPresentation(
-	    @CliOption(key = { "event-presentation-id" }, mandatory = true,
-		    help = "EventPresentation id to search available seats for") final int eventPresentationId) {
-	return ExceptionWrapperUtils.handleException(() -> {
-	    EventPresentation eventPresentation = eventPresentationService.getById(eventPresentationId);
-	    return String.format(
-		    "There are following available seats for event '%s' which takes place in auditory '%s' on %s:%s",
-		    eventPresentation.getEvent().getName(), eventPresentation.getAuditorium().getName(),
-		    eventPresentation.getAirDate(), OsUtils.LINE_SEPARATOR) +
-		    ticketService.getAvailableSeatsForEventPresentation(eventPresentation);
-	});
+            @CliOption(key = { "event-presentation-id" }, mandatory = true,
+                help = "EventPresentation id to search available seats for") final int eventPresentationId
+    ) {
+        return ExceptionWrapperUtils.handleException(() -> {
+            EventPresentation eventPresentation = eventPresentationService.getById(eventPresentationId);
+            return String.format(
+                    "There are following available seats for event '%s' which takes place in auditory '%s' on %s:%s",
+                    eventPresentation.getEvent().getName(), eventPresentation.getAuditorium().getName(),
+                    eventPresentation.getAirDate(), OsUtils.LINE_SEPARATOR) +
+                    ticketService.getAvailableSeatsForEventPresentation(eventPresentation);
+        });
     }
 
     @CliCommand(value = "ticket purchased",
-	    help = "View list of all purchased tickets for the specified event presentation [FOR ADMIN USAGE ONLY]")
+        help = "View list of all purchased tickets for the specified event presentation [FOR ADMIN USAGE ONLY]")
     public String getAllPurchasedTicketsForEventPresentation(
-	    @CliOption(key = { "event-presentation-id" }, mandatory = true,
-		    help = "EventPresentation id to search purchased tickets for") final int eventPresentationId) {
-	return ExceptionWrapperUtils.handleException(() -> {
-	    EventPresentation eventPresentation = eventPresentationService.getById(eventPresentationId);
-	    String presentedTicketsAsString = ticketService.getPurchasedTicketsForEventPresentation(eventPresentation)
-		    .stream().map(Object::toString)
-		    .map(str -> str + OsUtils.LINE_SEPARATOR)
-		    .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
-		    .toString();
-	    return String.format("Following tickets were purchased for event %s which takes place at %s:%s",
-		    eventPresentation.getEvent().getName(), eventPresentation.getAirDate(), OsUtils.LINE_SEPARATOR)
-		    + presentedTicketsAsString;
-	});
+            @CliOption(key = { "event-presentation-id" }, mandatory = true,
+                help = "EventPresentation id to search purchased tickets for") final int eventPresentationId
+    ) {
+        return ExceptionWrapperUtils.handleException(() -> {
+            EventPresentation eventPresentation = eventPresentationService.getById(eventPresentationId);
+            String presentedTicketsAsString = ticketService.getPurchasedTicketsForEventPresentation(eventPresentation)
+                    .stream().map(Object::toString)
+                    .map(str -> str + OsUtils.LINE_SEPARATOR)
+                    .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append)
+                    .toString();
+            return String.format("Following tickets were purchased for event %s which takes place at %s:%s",
+                    eventPresentation.getEvent().getName(), eventPresentation.getAirDate(), OsUtils.LINE_SEPARATOR)
+                    + presentedTicketsAsString;
+        });
     }
 }

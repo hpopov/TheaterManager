@@ -21,29 +21,28 @@ class DefaultEventServiceTest extends AbstractCreateReadUpdateServiceTest<Event>
 
     @Override
     protected AbstractCreateReadUpdateService<Event> getServiceForTest() {
-	return new DefaultEventService(eventRepository);
+        return new DefaultEventService(eventRepository);
     }
 
     @Override
     protected CrudRepository<Event> getMockedRepository() {
-	return eventRepository;
+        return eventRepository;
     }
 
     @Override
     protected Event getDummyEntity() {
-	return new Event();
+        return new Event();
     }
 
     @Override
     protected List<Event> getAllEntities() {
-	return Lists.newArrayList(
-		new Event(),
-		Event.builder().baseTicketPriceInCents(12345L).build());
+        return Lists.newArrayList(
+                new Event(),
+                Event.builder().baseTicketPriceInCents(12345L).build());
     }
 
     @Override
     protected void modifyNotIdFields(Event modifiedEntity) {
-	modifiedEntity.setName("New event name");
+        modifiedEntity.setName("New event name");
     }
-
 }

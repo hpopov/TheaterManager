@@ -23,30 +23,31 @@ public class DurationConverter implements Converter<Duration> {
     private final Pattern pattern;
 
     public DurationConverter() {
-	pattern = Pattern.compile(REGEX_FORMAT);
+        pattern = Pattern.compile(REGEX_FORMAT);
     }
 
     @Override
     public boolean supports(Class<?> type, String optionContext) {
-	return Duration.class.isAssignableFrom(type);
+        return Duration.class.isAssignableFrom(type);
     }
 
     @Override
     public Duration convertFromText(String value, Class<?> targetType, String optionContext) {
-	Matcher matcher = pattern.matcher(value);
-	if (!matcher.matches()) {
-	    throw new IllegalArgumentException(
-		    "Unable to convert " + value + " to duration using format " + REGEX_FORMAT);
-	}
-	int hours = Integer.parseInt(matcher.group(1));
-	int minutes = Integer.parseInt(matcher.group(2));
-	return Duration.ofMilliseconds(hours * MILLIESECONDS_PER_HOUR + minutes * MILLIESECONDS_PER_MINUTE);
+        Matcher matcher = pattern.matcher(value);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException(
+                    "Unable to convert " + value + " to duration using format " + REGEX_FORMAT);
+        }
+        int hours = Integer.parseInt(matcher.group(1));
+        int minutes = Integer.parseInt(matcher.group(2));
+        return Duration.ofMilliseconds(hours * MILLIESECONDS_PER_HOUR + minutes * MILLIESECONDS_PER_MINUTE);
     }
 
     @Override
-    public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData,
-	    String optionContext, MethodTarget target) {
-	return false;
+    public boolean getAllPossibleValues(
+            List<Completion> completions, Class<?> targetType, String existingData,
+            String optionContext, MethodTarget target
+    ) {
+        return false;
     }
-
 }

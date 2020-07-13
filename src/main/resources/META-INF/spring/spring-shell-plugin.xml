@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="
  		http://www.springframework.org/schema/beans
@@ -7,9 +8,13 @@
  		http://www.springframework.org/schema/context 
 		http://www.springframework.org/schema/context/spring-context.xsd">
 
-	<context:component-scan base-package="ua.com.kl.cmathtutor" />
+	<context:component-scan
+		base-package="ua.com.kl.cmathtutor" />
 
-	<bean id="consoleCommands" class="org.springframework.shell.commands.ConsoleCommands"></bean>
-	<bean id="quitCommands" class="org.springframework.shell.commands.ExitCommands"></bean>
-	<bean id="helpCommands" class="org.springframework.shell.commands.HelpCommands"></bean>
+	<bean id="consoleCommands"
+		class="org.springframework.shell.commands.ConsoleCommands"></bean>
+	<bean id="quitCommands"
+		class="org.springframework.shell.commands.ExitCommands"></bean>
+	<bean id="helpCommands"
+		class="org.springframework.shell.commands.HelpCommands"></bean>
 </beans>

@@ -13,30 +13,30 @@ public abstract class AbstractCreateReadUpdateService<T extends IdContainer> imp
 
     @Override
     public T create(T entity) {
-	entity.setId(null);
-	return getRepository().save(entity);
+        entity.setId(null);
+        return getRepository().save(entity);
     }
 
     @Override
     public List<T> getAll() {
-	return getRepository().findAll();
+        return getRepository().findAll();
     }
 
     @Override
     public T getById(Integer id) throws NotFoundException {
-	return getRepository().findById(id).orElseThrow(notFoundExceptionSupplier(id));
+        return getRepository().findById(id).orElseThrow(notFoundExceptionSupplier(id));
     }
 
     private Supplier<NotFoundException> notFoundExceptionSupplier(Integer id) {
-	return () -> new NotFoundException(makeNotFoundExceptionMessage(id));
+        return () -> new NotFoundException(makeNotFoundExceptionMessage(id));
     }
 
     protected abstract String makeNotFoundExceptionMessage(Integer id);
 
     @Override
     public T updateById(Integer id, T entity) throws NotFoundException {
-	entity.setId(id);
-	return getRepository().findById(id).map(existedEntity -> getRepository().save(entity))
-		.orElseThrow(notFoundExceptionSupplier(id));
+        entity.setId(id);
+        return getRepository().findById(id).map(existedEntity -> getRepository().save(entity))
+                .orElseThrow(notFoundExceptionSupplier(id));
     }
 }

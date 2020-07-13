@@ -17,23 +17,22 @@ public class DefaultUserService extends AbstractCreateReadUpdateService<User> im
 
     @Autowired
     public DefaultUserService(UserRepository userRepository) {
-	this.userRepository = userRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
     public User getByEmail(String email) throws NotFoundException {
-	return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(
-		String.format("User with email %s was not found", email)));
+        return userRepository.findByEmail(email).orElseThrow(() -> new NotFoundException(
+                String.format("User with email %s was not found", email)));
     }
 
     @Override
     protected CrudRepository<User> getRepository() {
-	return userRepository;
+        return userRepository;
     }
 
     @Override
     protected String makeNotFoundExceptionMessage(Integer id) {
-	return String.format("User with id %s was not found", id);
+        return String.format("User with id %s was not found", id);
     }
-
 }

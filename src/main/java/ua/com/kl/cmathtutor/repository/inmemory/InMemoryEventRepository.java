@@ -12,15 +12,14 @@ public class InMemoryEventRepository extends AbstractCrudInMemoryRepository<Even
 
     @Override
     protected void checkMandatoryAttributes(Event event) {
-	if (Objects.isNull(event.getBaseTicketPriceInCents())) {
-	    throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "baseTicketPriceInCents"));
-	}
-	if (Objects.isNull(event.getName())) {
-	    throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "name"));
-	}
-	if (Objects.isNull(event.getRating())) {
-	    throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "rating"));
-	}
+        if (Objects.isNull(event.getBaseTicketPriceInCents())) {
+            throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "baseTicketPriceInCents"));
+        }
+        if (Objects.isNull(event.getName())) {
+            throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "name"));
+        }
+        if (Objects.isNull(event.getRating())) {
+            throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "rating"));
+        }
     }
-
 }

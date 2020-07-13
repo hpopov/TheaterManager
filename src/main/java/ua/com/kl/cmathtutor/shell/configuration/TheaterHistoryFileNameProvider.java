@@ -11,11 +11,11 @@ public class TheaterHistoryFileNameProvider extends DefaultHistoryFileNameProvid
 
     @Override
     public String getHistoryFileName() {
-	return "theater-shell.log";
+        return "theater-shell.log";
     }
 
     @Override
     public String getProviderName() {
-	return "Theater Manager";
+        return "Theater Manager";
     }
 }

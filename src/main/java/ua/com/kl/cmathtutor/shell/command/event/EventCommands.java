@@ -40,84 +40,90 @@ public class EventCommands implements CommandMarker {
 
     @PostConstruct
     private void init() {
-	Event sherlockHolmesEvent = eventService.create(Event.builder()
-		.baseTicketPriceInCents(10000L)
-		.name("Sherlock Holmes & Dr Watson")
-		.rating(Rating.HIGH)
-		.build());
-	eventPresentationService.create(EventPresentation.builder()
-		.airDate(new Date())
-		.auditorium(auditoriumService.getAll().get(0))
-		.durationInMilliseconds(5400000L)
-		.event(sherlockHolmesEvent)
-		.build());
+        Event sherlockHolmesEvent = eventService.create(Event.builder()
+                .baseTicketPriceInCents(10000L)
+                .name("Sherlock Holmes & Dr Watson")
+                .rating(Rating.HIGH)
+                .build());
+        eventPresentationService.create(EventPresentation.builder()
+                .airDate(new Date())
+                .auditorium(auditoriumService.getAll().get(0))
+                .durationInMilliseconds(5400000L)
+                .event(sherlockHolmesEvent)
+                .build());
     }
 
     @CliAvailabilityIndicator({ "event all-presentations", "event all" })
     public boolean isGetAllPresentationsAvailable() {
-	return true;
+        return true;
     }
 
     @CliAvailabilityIndicator({ "event place", "event present" })
     public boolean isAdminEventCommandsAvailable() {
-	return authenticationState.isAdminAuthenticated();
+        return authenticationState.isAdminAuthenticated();
     }
 
     @CliCommand(value = "event all-presentations", help = "View list of all available event presentations")
     public String getAllEventPresentations() {
-	return "Currently available presentations are:" + OsUtils.LINE_SEPARATOR
-		+ eventPresentationService.getAll().stream()
-			.map(ep -> String.format(
-				"EventPresentation[%s]: event: '%s'[%s], airDate: %s, duration: %sh %sm, auditorium: '%s'",
-				ep.getId(), ep.getEvent().getName(), ep.getEvent().getId(), ep.getAirDate(),
-				ep.getDurationInMilliseconds() / DurationConverter.MILLIESECONDS_PER_HOUR,
-				(ep.getDurationInMilliseconds() % DurationConverter.MILLIESECONDS_PER_HOUR)
-					/ DurationConverter.MILLIESECONDS_PER_MINUTE,
-				ep.getAuditorium().getName()))
-			.map(str -> str + OsUtils.LINE_SEPARATOR).collect(StringBuilder::new,
-				StringBuilder::append, StringBuilder::append);
+        return "Currently available presentations are:" + OsUtils.LINE_SEPARATOR
+                + eventPresentationService.getAll().stream()
+                        .map(ep -> String.format(
+                                "EventPresentation[%s]: event: '%s'[%s], airDate: %s, duration: %sh %sm, auditorium: '%s'",
+                                ep.getId(), ep.getEvent().getName(), ep.getEvent().getId(), ep.getAirDate(),
+                                ep.getDurationInMilliseconds() / DurationConverter.MILLIESECONDS_PER_HOUR,
+                                (ep.getDurationInMilliseconds() % DurationConverter.MILLIESECONDS_PER_HOUR)
+                                        / DurationConverter.MILLIESECONDS_PER_MINUTE,
+                                ep.getAuditorium().getName()))
+                        .map(str -> str + OsUtils.LINE_SEPARATOR).collect(StringBuilder::new,
+                                StringBuilder::append, StringBuilder::append);
     }
 
     @CliCommand(value = "event all", help = "View list of all available events")
     public String getAllEvents() {
-	return "Currently available events are:" + OsUtils.LINE_SEPARATOR +
-		eventService.getAll().stream()
-			.map(Object::toString)
-			.map(str -> str + OsUtils.LINE_SEPARATOR).collect(StringBuilder::new,
-				StringBuilder::append, StringBuilder::append);
+        return "Currently available events are:" + OsUtils.LINE_SEPARATOR +
+                eventService.getAll().stream()
+                        .map(Object::toString)
+                        .map(str -> str + OsUtils.LINE_SEPARATOR).collect(StringBuilder::new,
+                                StringBuilder::append, StringBuilder::append);
     }
 
     @CliCommand(value = "event place", help = "Place new Event [FOR ADMIN USAGE ONLY]")
     public Event placeEvent(
-	    @CliOption(key = { "name" }, mandatory = true, help = "First name of the user") final String name,
-	    @CliOption(key = {
-		    "baseTicketPriceInCents" }, mandatory = false,
-		    help = "Base price of Ticket [US cents]") final long baseTicketPriceInCents,
-	    @CliOption(key = { "rating" }, mandatory = true, help = "Ratinge of the event") final Rating rating) {
-	return eventService.create(
-		Event.builder().baseTicketPriceInCents(baseTicketPriceInCents).name(name).rating(rating).build());
+            @CliOption(key = { "name" }, mandatory = true, help = "First name of the user") final String name,
+            @CliOption(key = {
+                    "baseTicketPriceInCents" },
+                mandatory = false,
+                help = "Base price of Ticket [US cents]") final long baseTicketPriceInCents,
+            @CliOption(key = { "rating" }, mandatory = true, help = "Ratinge of the event") final Rating rating
+    ) {
+        return eventService.create(
+                Event.builder().baseTicketPriceInCents(baseTicketPriceInCents).name(name).rating(rating).build());
     }
 
     @CliCommand(value = "event present",
-	    help = "Create event presentation for specified event id [FOR ADMIN USAGE ONLY]")
+        help = "Create event presentation for specified event id [FOR ADMIN USAGE ONLY]")
     public String createEventPresentation(
-	    @CliOption(key = { "eventId" }, mandatory = true, help = "Id of the event to present") final int eventId,
-	    @CliOption(key = {
-		    "auditorium" }, mandatory = true, help = "Name of the auditorium") final String auditoriumName,
-	    @CliOption(key = {
-		    "airDate" }, mandatory = true,
-		    help = "Air date in '" + DateTimeConverter.FORMAT + "' format") final DateTime airDateTime,
-	    @CliOption(key = {
-		    "duration" }, mandatory = false,
-		    help = "Duration of presentation in format'" + DurationConverter.FORMAT + "'. Default is 1 hour",
-		    unspecifiedDefaultValue = "01:00") final Duration duration) {
-	return ExceptionWrapperUtils.handleException(() -> {
-	    Auditorium auditorium = auditoriumService.getByName(auditoriumName);
-	    Event event = eventService.getById(eventId);
-	    return eventPresentationService
-		    .create(EventPresentation.builder().airDate(airDateTime.getDate()).auditorium(auditorium)
-			    .durationInMilliseconds(duration.getDurationInMilliseconds()).event(event).build())
-		    .toString();
-	});
+            @CliOption(key = { "eventId" }, mandatory = true, help = "Id of the event to present") final int eventId,
+            @CliOption(key = {
+                    "auditorium" },
+                mandatory = true, help = "Name of the auditorium") final String auditoriumName,
+            @CliOption(key = {
+                    "airDate" },
+                mandatory = true,
+                help = "Air date in '" + DateTimeConverter.FORMAT + "' format") final DateTime airDateTime,
+            @CliOption(key = {
+                    "duration" },
+                mandatory = false,
+                help = "Duration of presentation in format'" + DurationConverter.FORMAT + "'. Default is 1 hour",
+                unspecifiedDefaultValue = "01:00") final Duration duration
+    ) {
+        return ExceptionWrapperUtils.handleException(() -> {
+            Auditorium auditorium = auditoriumService.getByName(auditoriumName);
+            Event event = eventService.getById(eventId);
+            return eventPresentationService
+                    .create(EventPresentation.builder().airDate(airDateTime.getDate()).auditorium(auditorium)
+                            .durationInMilliseconds(duration.getDurationInMilliseconds()).event(event).build())
+                    .toString();
+        });
     }
 }

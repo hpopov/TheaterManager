@@ -20,27 +20,29 @@ public class CustomDateConverter implements Converter<CustomDate> {
     private DateFormat dateFormat;
 
     public CustomDateConverter() {
-	dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        dateFormat = new SimpleDateFormat(DATE_FORMAT);
     }
 
     @Override
     public boolean supports(Class<?> type, String optionContext) {
-	return CustomDate.class.isAssignableFrom(type);
+        return CustomDate.class.isAssignableFrom(type);
     }
 
     @Override
     public CustomDate convertFromText(String value, Class<?> targetType, String optionContext) {
-	try {
-	    return CustomDate.of(dateFormat.parse(value));
-	} catch (ParseException e) {
-	    throw new IllegalArgumentException(
-		    "Unable to convert " + value + " to custom date using format " + DATE_FORMAT);
-	}
+        try {
+            return CustomDate.of(dateFormat.parse(value));
+        } catch (ParseException e) {
+            throw new IllegalArgumentException(
+                    "Unable to convert " + value + " to custom date using format " + DATE_FORMAT);
+        }
     }
 
     @Override
-    public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData,
-	    String optionContext, MethodTarget target) {
-	return false;
+    public boolean getAllPossibleValues(
+            List<Completion> completions, Class<?> targetType, String existingData,
+            String optionContext, MethodTarget target
+    ) {
+        return false;
     }
 }

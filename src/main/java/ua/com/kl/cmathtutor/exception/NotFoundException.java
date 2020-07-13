@@ -4,6 +4,6 @@ package ua.com.kl.cmathtutor.exception;
 public class NotFoundException extends Exception {
 
     public NotFoundException(String message) {
-	super(message);
+        super(message);
     }
 }

@@ -21,6 +21,7 @@ import ua.com.kl.cmathtutor.shell.command.auth.AuthenticationState;
 
 @Component
 public class BookTicketsCommands implements CommandMarker {
+
     @Autowired
     private AuthenticationState authenticationState;
     @Autowired
@@ -32,93 +33,94 @@ public class BookTicketsCommands implements CommandMarker {
 
     @CliAvailabilityIndicator({ "ticket book" })
     public boolean isObserveTicketsCommandAvailable() {
-	return true;
+        return true;
     }
 
     @CliAvailabilityIndicator({ "ticket book-confirm", "ticket book-discard", "ticket book-review" })
     public boolean isBookTicketsCommandAvailable() {
-	return ticketState.hasTicketToPurchase();
+        return ticketState.hasTicketToPurchase();
     }
 
     @CliCommand(value = "ticket book",
-	    help = "Observe tickets for the specified event presentation and seats to be able to book them later")
+        help = "Observe tickets for the specified event presentation and seats to be able to book them later")
     public String observeTicketsForEventPresentationAndSeats(
-	    @CliOption(key = { "event-presentation-id" }, mandatory = true,
-		    help = "EventPresentation id to search available seats for") final int eventPresentationId,
-	    @CliOption(key = { "seats" }, mandatory = true,
-		    help = "Set of seat numbers to book tickets for") final Set<Integer> seats) {
-	return ExceptionWrapperUtils.handleException(() -> {
-	    EventPresentation eventPresentation = eventPresentationService.getById(eventPresentationId);
-	    List<Ticket> newTickets;
-	    if (authenticationState.isAuthenticated()) {
-		newTickets = ticketService.getNewTicketsForEventPresentationAndOwner(eventPresentation, seats,
-			authenticationState.getAuthenticatedUser());
-	    } else {
-		newTickets = ticketService.getNewTicketsForEventPresentation(eventPresentation, seats);
-	    }
-	    ticketState.setTickets(newTickets);
-	    return reviewTickets(eventPresentation, newTickets);
-	});
+            @CliOption(key = { "event-presentation-id" }, mandatory = true,
+                help = "EventPresentation id to search available seats for") final int eventPresentationId,
+            @CliOption(key = { "seats" }, mandatory = true,
+                help = "Set of seat numbers to book tickets for") final Set<Integer> seats
+    ) {
+        return ExceptionWrapperUtils.handleException(() -> {
+            EventPresentation eventPresentation = eventPresentationService.getById(eventPresentationId);
+            List<Ticket> newTickets;
+            if (authenticationState.isAuthenticated()) {
+                newTickets = ticketService.getNewTicketsForEventPresentationAndOwner(eventPresentation, seats,
+                        authenticationState.getAuthenticatedUser());
+            } else {
+                newTickets = ticketService.getNewTicketsForEventPresentation(eventPresentation, seats);
+            }
+            ticketState.setTickets(newTickets);
+            return reviewTickets(eventPresentation, newTickets);
+        });
     }
 
     private String reviewTickets(EventPresentation eventPresentation, List<Ticket> newTickets) {
-	return String.format("Ticket details for event %s[%s] which takes place at %s in auditorium: '%s'%s",
-		eventPresentation.getEvent().getName(), eventPresentation.getEvent().getId(),
-		eventPresentation.getAirDate(), eventPresentation.getAuditorium().getName(), OsUtils.LINE_SEPARATOR) +
-		newTickets.stream()
-			.map(ticket -> makeTicketRecord(ticket))
-			.collect(StringBuilder::new, StringBuilder::append, StringBuilder::append).toString()
-		+
-		String.format("====> Total price <====> %s <====%s",
-			formatMoney(newTickets.stream().mapToLong(Ticket::getTotalPriceInCents).sum()),
-			OsUtils.LINE_SEPARATOR)
-		+
-		"If you'd like to make a purchase to finish your booking, please, invoke 'ticket book-confirm'. "
-		+ "Otherwise invoke 'ticket book-discard'.";
+        return String.format("Ticket details for event %s[%s] which takes place at %s in auditorium: '%s'%s",
+                eventPresentation.getEvent().getName(), eventPresentation.getEvent().getId(),
+                eventPresentation.getAirDate(), eventPresentation.getAuditorium().getName(), OsUtils.LINE_SEPARATOR) +
+                newTickets.stream()
+                        .map(ticket -> makeTicketRecord(ticket))
+                        .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append).toString()
+                +
+                String.format("====> Total price <====> %s <====%s",
+                        formatMoney(newTickets.stream().mapToLong(Ticket::getTotalPriceInCents).sum()),
+                        OsUtils.LINE_SEPARATOR)
+                +
+                "If you'd like to make a purchase to finish your booking, please, invoke 'ticket book-confirm'. "
+                + "Otherwise invoke 'ticket book-discard'.";
     }
 
     private String formatMoney(long moneyInUsdCents) {
-	long dollars = moneyInUsdCents / 100L;
-	long cents = moneyInUsdCents % 100L;
-	return dollars + "." + cents + "$";
+        long dollars = moneyInUsdCents / 100L;
+        long cents = moneyInUsdCents % 100L;
+        return dollars + "." + cents + "$";
     }
 
     private String makeTicketRecord(Ticket ticket) {
-	return String.format("Seat %s, price: %s, discount: %s%%, total: %s%s",
-		ticket.getSeatNumber(), formatMoney(ticket.getCalculatedPriceInCents()),
-		ticket.getDiscountInPercent(), formatMoney(ticket.getTotalPriceInCents()), OsUtils.LINE_SEPARATOR);
+        return String.format("Seat %s, price: %s, discount: %s%%, total: %s%s",
+                ticket.getSeatNumber(), formatMoney(ticket.getCalculatedPriceInCents()),
+                ticket.getDiscountInPercent(), formatMoney(ticket.getTotalPriceInCents()), OsUtils.LINE_SEPARATOR);
     }
 
     @CliCommand(value = "ticket book-confirm",
-	    help = "Confirm tickets booking, which was observed during the last 'ticket book' command invokation")
+        help = "Confirm tickets booking, which was observed during the last 'ticket book' command invokation")
     public String bookTicketsFromState() {
-	return ExceptionWrapperUtils.handleException(() -> {
-	    long totalPriceInCents = ticketService
-		    .bookTickets(
-			    ticketState.getTickets().stream().peek(this::refreshOwner).collect(Collectors.toList()))
-		    .stream()
-		    .mapToLong(Ticket::getTotalPriceInCents).sum();
-	    ticketState.setTickets(null);
-	    return "Your payment of " + formatMoney(totalPriceInCents) + " was carried out successfully";
-	});
+        return ExceptionWrapperUtils.handleException(() -> {
+            long totalPriceInCents = ticketService
+                    .bookTickets(
+                            ticketState.getTickets().stream().peek(this::refreshOwner).collect(Collectors.toList()))
+                    .stream()
+                    .mapToLong(Ticket::getTotalPriceInCents).sum();
+            ticketState.setTickets(null);
+            return "Your payment of " + formatMoney(totalPriceInCents) + " was carried out successfully";
+        });
     }
 
     private void refreshOwner(Ticket ticket) {
-	ticket.setOwner(authenticationState.getAuthenticatedUser());
+        ticket.setOwner(authenticationState.getAuthenticatedUser());
     }
 
     @CliCommand(value = "ticket book-discard",
-	    help = "Book tickets, which was observed during the last 'ticket book' command invokation")
+        help = "Book tickets, which was observed during the last 'ticket book' command invokation")
     public String discardTicketsBookingFromState() {
-	ticketState.setTickets(null);
-	return "Your booking was discarded successfully";
+        ticketState.setTickets(null);
+        return "Your booking was discarded successfully";
     }
 
     @CliCommand(value = "ticket book-review",
-	    help = "View tickets, which was selected during the last 'ticket book' command invokation")
+        help = "View tickets, which was selected during the last 'ticket book' command invokation")
     public String reviewTicketsBookingFromState() {
-	List<Ticket> tickets = ticketState.getTickets();
-	tickets.forEach(this::refreshOwner);
-	return reviewTickets(tickets.get(0).getEventPresentation(), tickets);
+        List<Ticket> tickets = ticketState.getTickets();
+        tickets.forEach(this::refreshOwner);
+        return reviewTickets(tickets.get(0).getEventPresentation(), tickets);
     }
 }

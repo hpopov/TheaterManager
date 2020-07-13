@@ -13,11 +13,13 @@ public interface TicketService {
     Set<Integer> getAvailableSeatsForEventPresentation(EventPresentation eventPresentation);
 
     List<Ticket> getNewTicketsForEventPresentation(EventPresentation eventPresentation, Set<Integer> seatNumbers)
-	    throws TicketsAlreadyBookedException;
+            throws TicketsAlreadyBookedException;
 
-    List<Ticket> getNewTicketsForEventPresentationAndOwner(EventPresentation eventPresentation,
-	    Set<Integer> seatNumbers,
-	    User owner) throws TicketsAlreadyBookedException;
+    List<Ticket> getNewTicketsForEventPresentationAndOwner(
+            EventPresentation eventPresentation,
+            Set<Integer> seatNumbers,
+            User owner
+    ) throws TicketsAlreadyBookedException;
 
     List<Ticket> bookTickets(List<Ticket> tickets) throws TicketsAlreadyBookedException;
 

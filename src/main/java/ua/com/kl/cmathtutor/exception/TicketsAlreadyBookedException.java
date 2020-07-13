@@ -4,6 +4,6 @@ package ua.com.kl.cmathtutor.exception;
 public class TicketsAlreadyBookedException extends Exception {
 
     public TicketsAlreadyBookedException(String message) {
-	super(message);
+        super(message);
     }
 }

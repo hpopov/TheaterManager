@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -202,7 +203,8 @@
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>2.22.0</version>
 				<executions>
-					<!-- Invokes both the integration-test and the verify goals of the Failsafe Maven plugin -->
+					<!-- Invokes both the integration-test and the verify goals of the Failsafe 
+						Maven plugin -->
 					<execution>
 						<id>integration-tests</id>
 						<goals>
@@ -210,7 +212,8 @@
 							<goal>verify</goal>
 						</goals>
 						<configuration>
-							<!-- Skips integration tests if the value of skip.integration.tests property is true -->
+							<!-- Skips integration tests if the value of skip.integration.tests 
+								property is true -->
 							<skipTests>${skip.integration.tests}</skipTests>
 							<includes>
 								<include>**/*IntegrationTest</include>
@@ -223,7 +226,8 @@
 			</plugin>
 		</plugins>
 		<pluginManagement>
-			<!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+			<!-- lock down plugins versions to avoid using Maven defaults (may be 
+				moved to parent pom) -->
 			<plugins>
 				<!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
 				<plugin>

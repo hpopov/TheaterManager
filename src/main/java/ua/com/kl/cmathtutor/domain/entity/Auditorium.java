@@ -22,9 +22,8 @@ public class Auditorium implements Serializable {
     private Set<Integer> vipSeats;
 
     public Auditorium(String name, Integer numberOfSeats, String vipSeatsString) {
-	this.name = name;
-	this.numberOfSeats = numberOfSeats;
-	this.vipSeats = Stream.of(vipSeatsString.split(",")).map(Integer::parseInt).collect(Collectors.toSet());
+        this.name = name;
+        this.numberOfSeats = numberOfSeats;
+        this.vipSeats = Stream.of(vipSeatsString.split(",")).map(Integer::parseInt).collect(Collectors.toSet());
     }
-
 }

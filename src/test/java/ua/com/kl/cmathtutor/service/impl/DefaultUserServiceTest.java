@@ -34,54 +34,53 @@ class DefaultUserServiceTest extends AbstractCreateReadUpdateServiceTest<User> {
 
     @Override
     protected AbstractCreateReadUpdateService<User> getServiceForTest() {
-	return new DefaultUserService(userRepository);
+        return new DefaultUserService(userRepository);
     }
 
     @Override
     protected CrudRepository<User> getMockedRepository() {
-	return userRepository;
+        return userRepository;
     }
 
     @Override
     protected User getDummyEntity() {
-	return new User();
+        return new User();
     }
 
     @Override
     protected List<User> getAllEntities() {
-	return Lists.newArrayList(
-		User.builder().birthdayDate(new Date()).isAdmin(true).build(),
-		new User(),
-		User.builder().email("user@email.com").build());
+        return Lists.newArrayList(
+                User.builder().birthdayDate(new Date()).isAdmin(true).build(),
+                new User(),
+                User.builder().email("user@email.com").build());
     }
 
     @Override
     protected void modifyNotIdFields(User modifiedEntity) {
-	modifiedEntity.setFirstName("UserFirstName");
+        modifiedEntity.setFirstName("UserFirstName");
     }
 
     @BeforeEach
     void setUpUserService() {
-	service = new DefaultUserService(userRepository);
+        service = new DefaultUserService(userRepository);
     }
 
     @Test
     void whenUserExists_Then_getByEmail_ShouldReturnUser() throws NotFoundException {
-	String email = "email";
-	User user = User.builder().email(email).build();
-	when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
+        String email = "email";
+        User user = User.builder().email(email).build();
+        when(userRepository.findByEmail(any())).thenReturn(Optional.of(user));
 
-	User givenUser = service.getByEmail(email);
+        User givenUser = service.getByEmail(email);
 
-	assertThat(givenUser, is(sameInstance(user)));
+        assertThat(givenUser, is(sameInstance(user)));
     }
 
     @Test
     void whenUserNotExist_Then_getByEmail_ShouldThrowException() throws NotFoundException {
-	String email = "email";
-	when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
+        String email = "email";
+        when(userRepository.findByEmail(any())).thenReturn(Optional.empty());
 
-	assertThrows(NotFoundException.class, () -> service.getByEmail(email));
+        assertThrows(NotFoundException.class, () -> service.getByEmail(email));
     }
-
 }

@@ -4,6 +4,6 @@ package ua.com.kl.cmathtutor.exception;
 public class MandatoryAttributeException extends RuntimeException {
 
     public MandatoryAttributeException(String message) {
-	super(message);
+        super(message);
     }
 }

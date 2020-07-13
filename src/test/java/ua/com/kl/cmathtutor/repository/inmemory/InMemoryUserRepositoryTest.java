@@ -22,60 +22,59 @@ class InMemoryUserRepositoryTest extends AbstractCrudInMemoryRepositoryTest<User
 
     @Override
     protected InMemoryUserRepository getRepositoryForTesting() {
-	return new InMemoryUserRepository();
+        return new InMemoryUserRepository();
     }
 
     @Override
     protected User getDummyEntity() {
-	return User.builder().birthdayDate(Calendar.getInstance().getTime()).email("unique").password("nimda").build();
+        return User.builder().birthdayDate(Calendar.getInstance().getTime()).email("unique").password("nimda").build();
     }
 
     @Override
     protected void modifyNotIdFields(User savedEntity) {
-	savedEntity.setFirstName("Alabama");
+        savedEntity.setFirstName("Alabama");
     }
 
     @Override
     protected void modifyUniqueAttributes(User savedEntity) {
-	savedEntity.setEmail(savedEntity.getEmail() + "1");
+        savedEntity.setEmail(savedEntity.getEmail() + "1");
     }
 
     @Override
     public List<User> getAllEntities() {
-	return Lists.newArrayList(getDummyEntity(), getDummyEntity2());
+        return Lists.newArrayList(getDummyEntity(), getDummyEntity2());
     }
 
     private User getDummyEntity2() {
-	User dummyEntity = getDummyEntity();
-	dummyEntity.setEmail("otherUnique");
-	return dummyEntity;
+        User dummyEntity = getDummyEntity();
+        dummyEntity.setEmail("otherUnique");
+        return dummyEntity;
     }
 
     @BeforeEach
     void setUpUserRepository() {
-	repository = getRepositoryForTesting();
+        repository = getRepositoryForTesting();
     }
 
     @Test
     void whenUserExists_Then_findByEmail_ShouldReturnUserWithEmail() {
-	String email = "email";
-	User user = getDummyEntity();
-	user.setEmail("email");
-	repository.save(user);
+        String email = "email";
+        User user = getDummyEntity();
+        user.setEmail("email");
+        repository.save(user);
 
-	Optional<User> givenUser = repository.findByEmail(email);
+        Optional<User> givenUser = repository.findByEmail(email);
 
-	assertTrue(givenUser.isPresent());
-	assertThat(givenUser.get(), is(equalTo(user)));
+        assertTrue(givenUser.isPresent());
+        assertThat(givenUser.get(), is(equalTo(user)));
     }
 
     @Test
     void whenUserNotExist_Then_findByEmail_ShouldReturnEmptyOptional() {
-	String email = "email";
+        String email = "email";
 
-	Optional<User> givenUser = repository.findByEmail(email);
+        Optional<User> givenUser = repository.findByEmail(email);
 
-	assertFalse(givenUser.isPresent());
+        assertFalse(givenUser.isPresent());
     }
-
 }

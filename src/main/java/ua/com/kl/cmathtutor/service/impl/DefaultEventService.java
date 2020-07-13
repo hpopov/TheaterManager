@@ -17,22 +17,21 @@ public class DefaultEventService extends AbstractCreateReadUpdateService<Event> 
 
     @Autowired
     public DefaultEventService(EventRepository eventRepository) {
-	this.eventRepository = eventRepository;
+        this.eventRepository = eventRepository;
     }
 
     @Override
     protected CrudRepository<Event> getRepository() {
-	return eventRepository;
+        return eventRepository;
     }
 
     @Override
     protected String makeNotFoundExceptionMessage(Integer id) {
-	return String.format("Event with id %s was not found", id);
+        return String.format("Event with id %s was not found", id);
     }
 
     @Override
     public Event getById(Integer id) throws NotFoundException {
-	return super.getById(id);
+        return super.getById(id);
     }
-
 }

@@ -17,6 +17,6 @@ public class TicketState {
     private List<Ticket> tickets;
 
     public boolean hasTicketToPurchase() {
-	return Objects.nonNull(tickets);
+        return Objects.nonNull(tickets);
     }
 }

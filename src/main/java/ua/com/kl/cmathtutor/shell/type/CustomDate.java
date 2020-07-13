@@ -13,6 +13,6 @@ public class CustomDate {
     private final Date date;
 
     public static CustomDate of(Date date) {
-	return new CustomDate(date);
+        return new CustomDate(date);
     }
 }

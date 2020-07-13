@@ -13,5 +13,4 @@ public interface CreateReadUpdateService<T> {
     T getById(Integer id) throws NotFoundException;
 
     T updateById(Integer id, T entity) throws NotFoundException;
-
 }

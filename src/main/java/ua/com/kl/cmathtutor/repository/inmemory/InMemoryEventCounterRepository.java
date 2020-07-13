@@ -11,7 +11,7 @@ import ua.com.kl.cmathtutor.repository.EventCounterRepository;
 import ua.com.kl.cmathtutor.repository.EventRepository;
 
 public class InMemoryEventCounterRepository extends AbstractCrudInMemoryRepository<EventCounter>
-	implements EventCounterRepository {
+        implements EventCounterRepository {
 
     private static final String EVENT_SHOULD_EXIST_MSG = "Event for specified eventId should be persisted already";
 
@@ -22,25 +22,25 @@ public class InMemoryEventCounterRepository extends AbstractCrudInMemoryReposito
 
     @Override
     protected void checkMandatoryAttributes(EventCounter eventCounter) {
-	if (Objects.isNull(eventCounter.getEventId())) {
-	    throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "eventId"));
-	}
-	if (!eventRepository.findById(eventCounter.getEventId()).isPresent()) {
-	    throw new MandatoryAttributeException(EVENT_SHOULD_EXIST_MSG);
-	}
-	long eventCountersWithSameEventId = findAll().stream()
-		.filter(ec -> ec.getEventId().equals(eventCounter.getEventId()))
-		.filter(ec -> !ec.getId().equals(eventCounter.getId()))
-		.count();
-	if (eventCountersWithSameEventId != 0) {
-	    throw new DuplicateKeyException(String.format(
-		    "Event id has to be unique, but found %s other eventCounters with same event id",
-		    eventCountersWithSameEventId));
-	}
+        if (Objects.isNull(eventCounter.getEventId())) {
+            throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "eventId"));
+        }
+        if (!eventRepository.findById(eventCounter.getEventId()).isPresent()) {
+            throw new MandatoryAttributeException(EVENT_SHOULD_EXIST_MSG);
+        }
+        long eventCountersWithSameEventId = findAll().stream()
+                .filter(ec -> ec.getEventId().equals(eventCounter.getEventId()))
+                .filter(ec -> !ec.getId().equals(eventCounter.getId()))
+                .count();
+        if (eventCountersWithSameEventId != 0) {
+            throw new DuplicateKeyException(String.format(
+                    "Event id has to be unique, but found %s other eventCounters with same event id",
+                    eventCountersWithSameEventId));
+        }
     }
 
     @Override
     public Optional<EventCounter> findByEventId(Integer eventId) {
-	return findAll().stream().filter(ec -> ec.getEventId().equals(eventId)).findFirst();
+        return findAll().stream().filter(ec -> ec.getEventId().equals(eventId)).findFirst();
     }
 }

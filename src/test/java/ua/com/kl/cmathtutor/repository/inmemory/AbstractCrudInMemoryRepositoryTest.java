@@ -33,7 +33,7 @@ abstract public class AbstractCrudInMemoryRepositoryTest<T extends Serializable 
 
     @BeforeEach
     private void setUpBeforeEachAbstract() throws Exception {
-	repository = getRepositoryForTesting();
+        repository = getRepositoryForTesting();
     }
 
     protected abstract AbstractCrudInMemoryRepository<T> getRepositoryForTesting();
@@ -42,143 +42,141 @@ abstract public class AbstractCrudInMemoryRepositoryTest<T extends Serializable 
 
     @Test
     void save_ShouldReturnSameEntity() {
-	T entity = getDummyEntity();
+        T entity = getDummyEntity();
 
-	T savedEntity = repository.save(entity);
+        T savedEntity = repository.save(entity);
 
-	assertSame(entity, savedEntity);
+        assertSame(entity, savedEntity);
     }
 
     @Test
     void save_ShouldCreateNewEntity() {
-	T savedEntity = repository.save(getDummyEntity());
+        T savedEntity = repository.save(getDummyEntity());
 
-	assertThat("The first created entity should has id of 1", savedEntity.getId(), is(equalTo(1)));
+        assertThat("The first created entity should has id of 1", savedEntity.getId(), is(equalTo(1)));
     }
 
     @Test
     void findById_withIdIsNull_ShouldReturnEmptyOptional() {
-	assertFalse(repository.findById(null).isPresent());
+        assertFalse(repository.findById(null).isPresent());
     }
 
     @Test
     void whenEntityIsCreated_Then_findById_withThisEntityId_ShouldReturnEqualButNotSameEntity() {
-	T savedEntity = repository.save(getDummyEntity());
+        T savedEntity = repository.save(getDummyEntity());
 
-	Optional<T> foundEntity = repository.findById(savedEntity.getId());
+        Optional<T> foundEntity = repository.findById(savedEntity.getId());
 
-	assertAll(() -> assertTrue(foundEntity.isPresent()),
-		() -> assertThat(foundEntity.get(), is(equalTo(savedEntity))),
-		() -> assertThat(foundEntity.get(), not(sameInstance(savedEntity))));
+        assertAll(() -> assertTrue(foundEntity.isPresent()),
+                () -> assertThat(foundEntity.get(), is(equalTo(savedEntity))),
+                () -> assertThat(foundEntity.get(), not(sameInstance(savedEntity))));
     }
 
     @Test
     void whenEntityIsCreated_AndThenIsModifiedAndSaved_Then_findById_withThisEntityId_ShouldReturnSavedEntity() {
-	T savedEntity = repository.save(getDummyEntity());
-	int savedEntityId = savedEntity.getId();
-	modifyNotIdFields(savedEntity);
-	repository.save(savedEntity);
+        T savedEntity = repository.save(getDummyEntity());
+        int savedEntityId = savedEntity.getId();
+        modifyNotIdFields(savedEntity);
+        repository.save(savedEntity);
 
-	Optional<T> foundEntity = repository.findById(savedEntityId);
+        Optional<T> foundEntity = repository.findById(savedEntityId);
 
-	assertThat(foundEntity.get(), is(equalTo(savedEntity)));
+        assertThat(foundEntity.get(), is(equalTo(savedEntity)));
     }
 
     protected abstract void modifyNotIdFields(T savedEntity);
 
     @Test
     void whenEntityIsCreated_AndThenIsModified_Then_findById_withThisEntityId_ShouldReturnOldEntity() {
-	T savedEntity = repository.save(getDummyEntity());
-	int savedEntityId = savedEntity.getId();
-	modifyNotIdFields(savedEntity);
+        T savedEntity = repository.save(getDummyEntity());
+        int savedEntityId = savedEntity.getId();
+        modifyNotIdFields(savedEntity);
 
-	Optional<T> foundEntity = repository.findById(savedEntityId);
+        Optional<T> foundEntity = repository.findById(savedEntityId);
 
-	assertThat(foundEntity.get(), not(equalTo(savedEntity)));
+        assertThat(foundEntity.get(), not(equalTo(savedEntity)));
     }
 
     @Test
     void whenEntityIsCreated_AndThenItsIdModified_Then_findById_withUpdatedEntityId_ShouldReturnNewCreatedEntity() {
-	T savedEntity = repository.save(getDummyEntity());
-	Integer savedOldEntityId = savedEntity.getId();
-	savedEntity.setId(2 * savedOldEntityId);
-	modifyUniqueAttributes(savedEntity);
-	repository.save(savedEntity);
+        T savedEntity = repository.save(getDummyEntity());
+        Integer savedOldEntityId = savedEntity.getId();
+        savedEntity.setId(2 * savedOldEntityId);
+        modifyUniqueAttributes(savedEntity);
+        repository.save(savedEntity);
 
-	Optional<T> foundEntity = repository.findById(savedEntity.getId());
-	Optional<T> foundOldEntity = repository.findById(savedOldEntityId);
+        Optional<T> foundEntity = repository.findById(savedEntity.getId());
+        Optional<T> foundOldEntity = repository.findById(savedOldEntityId);
 
-	assertAll(() -> assertNotNull(foundEntity.get()),
-		() -> assertThat(foundEntity.get(), is(equalTo(savedEntity))),
-		() -> assertThat(foundEntity.get(), not(sameInstance(savedEntity))),
-		() -> assertThat(foundOldEntity.get(), not(equalTo(savedEntity))));
+        assertAll(() -> assertNotNull(foundEntity.get()),
+                () -> assertThat(foundEntity.get(), is(equalTo(savedEntity))),
+                () -> assertThat(foundEntity.get(), not(sameInstance(savedEntity))),
+                () -> assertThat(foundOldEntity.get(), not(equalTo(savedEntity))));
     }
 
     protected abstract void modifyUniqueAttributes(T savedEntity);
 
     @Test
     void whenSeveralEntitiesAreCreated_Then_findAll_ShouldReturnAllSavedEntities() {
-	List<T> entities = getAllEntities();
-	List<T> expectedEntities = entities.stream().map(repository::save).collect(Collectors.toList());
+        List<T> entities = getAllEntities();
+        List<T> expectedEntities = entities.stream().map(repository::save).collect(Collectors.toList());
 
-	List<T> foundEntities = repository.findAll();
+        List<T> foundEntities = repository.findAll();
 
-	assertThat(foundEntities, containsInAnyOrder(expectedEntities.toArray()));
+        assertThat(foundEntities, containsInAnyOrder(expectedEntities.toArray()));
     }
 
     public abstract List<T> getAllEntities();
 
-//    @Test
-//    void whenEntityExists_Then_deleteById_ShouldReturnTrueAndDeleteEntity() {
-//	T entity = repository.save(getDummyEntity());
-//
-//	assertAll(() -> assertTrue(repository.deleteById(entity.getId())),
-//		() -> assertFalse(repository.findById(entity.getId()).isPresent()));
-//    }
-//
-//    @Test
-//    void whenEntityNotExists_Then_deleteById_ShouldReturnFalse() {
-//	assertFalse(repository.deleteById(123));
-//    }
+    // @Test
+    // void whenEntityExists_Then_deleteById_ShouldReturnTrueAndDeleteEntity() {
+    // T entity = repository.save(getDummyEntity());
+    //
+    // assertAll(() -> assertTrue(repository.deleteById(entity.getId())),
+    // () -> assertFalse(repository.findById(entity.getId()).isPresent()));
+    // }
+    //
+    // @Test
+    // void whenEntityNotExists_Then_deleteById_ShouldReturnFalse() {
+    // assertFalse(repository.deleteById(123));
+    // }
 
     @Test
     void whenEntityExists_Then_delete_ShouldReturnTrueAndDeleteEntity() {
-	T entity = repository.save(getDummyEntity());
+        T entity = repository.save(getDummyEntity());
 
-	assertAll(() -> assertTrue(repository.delete(entity)),
-		() -> assertFalse(repository.findById(entity.getId()).isPresent()));
+        assertAll(() -> assertTrue(repository.delete(entity)),
+                () -> assertFalse(repository.findById(entity.getId()).isPresent()));
     }
 
     @Test
     void whenEntityNotExists_Then_delete_ShouldReturnFalse() {
-	assertFalse(repository.delete(getDummyEntity()));
+        assertFalse(repository.delete(getDummyEntity()));
     }
 
     @Test
     @DisplayName("Id of created entity among all created ones must be equal to index+1")
     void whenSeveralEntitiesAreCreated_Then_TheyShouldContainsSequentialId() {
-	List<T> createdEntities = getAllEntities().stream().map(getRepositoryForTesting()::save)
-		.collect(Collectors.toList());
+        List<T> createdEntities = getAllEntities().stream().map(getRepositoryForTesting()::save)
+                .collect(Collectors.toList());
 
-	assertThat(createdEntities.stream().map(e -> new ImmutablePair<>(createdEntities.indexOf(e), e))
-		.collect(Collectors.toSet()), everyItem(hasCorrectId()));
+        assertThat(createdEntities.stream().map(e -> new ImmutablePair<>(createdEntities.indexOf(e), e))
+                .collect(Collectors.toSet()), everyItem(hasCorrectId()));
     }
 
     private Matcher<ImmutablePair<Integer, T>> hasCorrectId() {
-	return new EntitiesIdMatcher();
+        return new EntitiesIdMatcher();
     }
 
     private class EntitiesIdMatcher extends CustomTypeSafeMatcher<ImmutablePair<Integer, T>> {
 
-	public EntitiesIdMatcher() {
-	    super("The entity index should be less by 1 then the entity id");
-	}
+        public EntitiesIdMatcher() {
+            super("The entity index should be less by 1 then the entity id");
+        }
 
-	@Override
-	protected boolean matchesSafely(ImmutablePair<Integer, T> item) {
-	    return item.getValue().getId().equals(item.getKey() + 1);
-	}
-
+        @Override
+        protected boolean matchesSafely(ImmutablePair<Integer, T> item) {
+            return item.getValue().getId().equals(item.getKey() + 1);
+        }
     }
-
 }

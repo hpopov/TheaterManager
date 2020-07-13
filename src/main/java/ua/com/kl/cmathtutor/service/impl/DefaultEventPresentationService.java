@@ -17,59 +17,58 @@ import ua.com.kl.cmathtutor.service.EventPresentationService;
 
 @Service
 public class DefaultEventPresentationService extends AbstractCreateReadUpdateService<EventPresentation>
-	implements EventPresentationService {
+        implements EventPresentationService {
 
     private EventPresentationRepository eventPresentationRepository;
 
     @Autowired
     public DefaultEventPresentationService(EventPresentationRepository eventPresentationRepository) {
-	this.eventPresentationRepository = eventPresentationRepository;
+        this.eventPresentationRepository = eventPresentationRepository;
     }
 
     @Override
     public EventPresentation create(EventPresentation eventPresentation) {
-	assertEventPresentationIsNotConnectedToExistingOnes(eventPresentation);
-	return super.create(eventPresentation);
+        assertEventPresentationIsNotConnectedToExistingOnes(eventPresentation);
+        return super.create(eventPresentation);
     }
 
     private void assertEventPresentationIsNotConnectedToExistingOnes(EventPresentation eventPresentation)
-	    throws IllegalArgumentException {
-	if (isEventPresentationConnectedToExisting(eventPresentation)) {
-	    throw new IllegalArgumentException(
-		    "Air time range in this eventPresentation intersects with existing presentations!");
-	}
+            throws IllegalArgumentException {
+        if (isEventPresentationConnectedToExisting(eventPresentation)) {
+            throw new IllegalArgumentException(
+                    "Air time range in this eventPresentation intersects with existing presentations!");
+        }
     }
 
     private boolean isEventPresentationConnectedToExisting(EventPresentation eventPresentation) {
-	Auditorium auditorium = eventPresentation.getAuditorium();
-	Range<Date> currentEventPresentationTimeRange = getTimeRangeFromEventPresentation(eventPresentation);
-	return eventPresentationRepository.findAll().stream()
-		.filter(presentation -> auditorium.equals(presentation.getAuditorium()))
-		.filter(presentation -> !presentation.getId().equals(eventPresentation.getId()))
-		.map(this::getTimeRangeFromEventPresentation)
-		.anyMatch(tRange -> currentEventPresentationTimeRange.isConnected(tRange));
+        Auditorium auditorium = eventPresentation.getAuditorium();
+        Range<Date> currentEventPresentationTimeRange = getTimeRangeFromEventPresentation(eventPresentation);
+        return eventPresentationRepository.findAll().stream()
+                .filter(presentation -> auditorium.equals(presentation.getAuditorium()))
+                .filter(presentation -> !presentation.getId().equals(eventPresentation.getId()))
+                .map(this::getTimeRangeFromEventPresentation)
+                .anyMatch(tRange -> currentEventPresentationTimeRange.isConnected(tRange));
     }
 
     private Range<Date> getTimeRangeFromEventPresentation(EventPresentation eventPresentation) {
-	return Range.open(eventPresentation.getAirDate(),
-		new Date(eventPresentation.getAirDate().getTime() + eventPresentation.getDurationInMilliseconds()));
+        return Range.open(eventPresentation.getAirDate(),
+                new Date(eventPresentation.getAirDate().getTime() + eventPresentation.getDurationInMilliseconds()));
     }
 
     @Override
     public EventPresentation updateById(Integer id, EventPresentation entity) throws NotFoundException {
-	entity.setId(id);
-	assertEventPresentationIsNotConnectedToExistingOnes(entity);
-	return super.updateById(id, entity);
+        entity.setId(id);
+        assertEventPresentationIsNotConnectedToExistingOnes(entity);
+        return super.updateById(id, entity);
     }
 
     @Override
     protected CrudRepository<EventPresentation> getRepository() {
-	return eventPresentationRepository;
+        return eventPresentationRepository;
     }
 
     @Override
     protected String makeNotFoundExceptionMessage(Integer id) {
-	return String.format("EventPresentation with id %s was not found", id);
+        return String.format("EventPresentation with id %s was not found", id);
     }
-
 }

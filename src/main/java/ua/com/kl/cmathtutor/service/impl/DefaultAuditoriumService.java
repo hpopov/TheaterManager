@@ -19,22 +19,21 @@ public class DefaultAuditoriumService implements AuditoriumService {
 
     @Autowired
     public DefaultAuditoriumService(@Qualifier("auditoriums") List<Auditorium> auditoriums) {
-	this.auditoriums = auditoriums;
+        this.auditoriums = auditoriums;
     }
 
     @Override
     public List<Auditorium> getAll() {
-	return Collections.unmodifiableList(auditoriums);
+        return Collections.unmodifiableList(auditoriums);
     }
 
     @Override
     public Auditorium getByName(String name) throws NotFoundException {
-	return auditoriums.stream().filter(aud -> aud.getName().equals(name)).findFirst()
-		.orElseThrow(auditoriumNotFoundException(name));
+        return auditoriums.stream().filter(aud -> aud.getName().equals(name)).findFirst()
+                .orElseThrow(auditoriumNotFoundException(name));
     }
 
     private Supplier<NotFoundException> auditoriumNotFoundException(String name) {
-	return () -> new NotFoundException(String.format("Auditorium with name %s was not found", name));
+        return () -> new NotFoundException(String.format("Auditorium with name %s was not found", name));
     }
-
 }

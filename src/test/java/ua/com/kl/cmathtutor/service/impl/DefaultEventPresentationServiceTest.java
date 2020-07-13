@@ -32,46 +32,46 @@ class DefaultEventPresentationServiceTest extends AbstractCreateReadUpdateServic
 
     @Override
     protected AbstractCreateReadUpdateService<EventPresentation> getServiceForTest() {
-	return new DefaultEventPresentationService(eventPresentationRepository);
+        return new DefaultEventPresentationService(eventPresentationRepository);
     }
 
     @Override
     protected CrudRepository<EventPresentation> getMockedRepository() {
-	return eventPresentationRepository;
+        return eventPresentationRepository;
     }
 
     @Override
     protected EventPresentation getDummyEntity() {
-	return EventPresentation.builder().airDate(new Date()).durationInMilliseconds(DURATION_IN_MS).build();
+        return EventPresentation.builder().airDate(new Date()).durationInMilliseconds(DURATION_IN_MS).build();
     }
 
     @Override
     protected List<EventPresentation> getAllEntities() {
-	return Lists.newArrayList(
-		EventPresentation.builder().airDate(new Date()).build(),
-		new EventPresentation());
+        return Lists.newArrayList(
+                EventPresentation.builder().airDate(new Date()).build(),
+                new EventPresentation());
     }
 
     @Override
     protected void modifyNotIdFields(EventPresentation modifiedEntity) {
-	modifiedEntity.setAuditorium(new Auditorium());
+        modifiedEntity.setAuditorium(new Auditorium());
     }
 
     @BeforeEach
     void setUp() {
-	service = new DefaultEventPresentationService(eventPresentationRepository);
+        service = new DefaultEventPresentationService(eventPresentationRepository);
     }
 
     @Test
     void whenNewEventPresentationTimeIntersectsWithExistingOne_Then_create_ShouldThrowAnException() {
-	EventPresentation existedPresentation = getDummyEntity();
-	existedPresentation.setId(1);
-	EventPresentation newPresentation = getDummyEntity();
-	newPresentation.setAirDate(new Date(newPresentation.getAirDate().getTime() + DURATION_IN_MS / 2));
-	when(eventPresentationRepository.findAll()).thenReturn(Lists.newArrayList(existedPresentation));
+        EventPresentation existedPresentation = getDummyEntity();
+        existedPresentation.setId(1);
+        EventPresentation newPresentation = getDummyEntity();
+        newPresentation.setAirDate(new Date(newPresentation.getAirDate().getTime() + DURATION_IN_MS / 2));
+        when(eventPresentationRepository.findAll()).thenReturn(Lists.newArrayList(existedPresentation));
 
-	assertThrows(RuntimeException.class, () -> service.create(newPresentation));
+        assertThrows(RuntimeException.class, () -> service.create(newPresentation));
 
-	verify(eventPresentationRepository, only()).findAll();
+        verify(eventPresentationRepository, only()).findAll();
     }
 }

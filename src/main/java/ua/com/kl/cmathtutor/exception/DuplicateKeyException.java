@@ -4,6 +4,6 @@ package ua.com.kl.cmathtutor.exception;
 public class DuplicateKeyException extends RuntimeException {
 
     public DuplicateKeyException(String message) {
-	super(message);
+        super(message);
     }
 }

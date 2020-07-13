@@ -11,6 +11,6 @@ public class Duration {
     private long durationInMilliseconds;
 
     public static Duration ofMilliseconds(long durationInMilliseconds) {
-	return new Duration(durationInMilliseconds);
+        return new Duration(durationInMilliseconds);
     }
 }

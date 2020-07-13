@@ -16,11 +16,10 @@ public class AuthenticationState {
     private User authenticatedUser;
 
     public boolean isAuthenticated() {
-	return Objects.nonNull(authenticatedUser);
+        return Objects.nonNull(authenticatedUser);
     }
 
     public boolean isAdminAuthenticated() {
-	return isAuthenticated() && getAuthenticatedUser().isAdmin();
+        return isAuthenticated() && getAuthenticatedUser().isAdmin();
     }
-
 }

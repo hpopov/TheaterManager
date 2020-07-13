@@ -12,29 +12,29 @@ public class TheaterBannerProvider extends DefaultBannerProvider {
 
     @Override
     public String getBanner() {
-	StringBuilder sb = new StringBuilder();
-	sb
-		.append("|===========================================================================|")
-		.append(OsUtils.LINE_SEPARATOR)
-		.append("|=====================         Theater Manager         =====================|")
-		.append(OsUtils.LINE_SEPARATOR)
-		.append("|===========================================================================|");
-	return sb.toString();
+        StringBuilder sb = new StringBuilder();
+        sb
+                .append("|===========================================================================|")
+                .append(OsUtils.LINE_SEPARATOR)
+                .append("|=====================         Theater Manager         =====================|")
+                .append(OsUtils.LINE_SEPARATOR)
+                .append("|===========================================================================|");
+        return sb.toString();
     }
 
     @Override
     public String getProviderName() {
-	return "Theater Manager";
+        return "Theater Manager";
     }
 
     @Override
     public String getVersion() {
-	return "1.1.0";
+        return "1.1.0";
     }
 
     @Override
     public String getWelcomeMessage() {
-	return "Welcome to the Theater Manager app. Please, use tab to get auto-complete." + OsUtils.LINE_SEPARATOR
-		+ "If you need any help, just go ahead and type 'help' and press Enter";
+        return "Welcome to the Theater Manager app. Please, use tab to get auto-complete." + OsUtils.LINE_SEPARATOR
+                + "If you need any help, just go ahead and type 'help' and press Enter";
     }
 }

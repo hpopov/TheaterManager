@@ -18,33 +18,32 @@ public class DefaultDiscountService implements DiscountService {
 
     @Autowired
     public DefaultDiscountService(@Qualifier("discountStrategies") Iterable<DiscountStrategy> discountStrategies) {
-	this.discountStrategies = discountStrategies;
+        this.discountStrategies = discountStrategies;
     }
 
     @Override
     public void applyDiscountToTickets(Collection<Ticket> tickets) {
-	for (DiscountStrategy discountStrategy : discountStrategies) {
-	    Collection<Double> discountsPercentForTickets = discountStrategy.getDiscountsPercentForTickets(tickets);
-	    if (discountsPercentForTickets.size() != tickets.size()) {
-		throw new IllegalArgumentException(
-			"Dimensions of tickets and discountsPercentForTickets must be equal!");
-	    }
-	    Iterator<Ticket> ticketsIt = tickets.iterator();
-	    Iterator<Double> discountsIt = discountsPercentForTickets.iterator();
-	    while (ticketsIt.hasNext()) {
-		Ticket ticket = ticketsIt.next();
-		Double discountInPercent = discountsIt.next();
-		if (ticket.getDiscountInPercent() < discountInPercent) {
-		    ticket.setDiscountInPercent(discountInPercent);
-		}
-	    }
-	}
-	tickets.forEach(this::applyDiscountForTicket);
+        for (DiscountStrategy discountStrategy : discountStrategies) {
+            Collection<Double> discountsPercentForTickets = discountStrategy.getDiscountsPercentForTickets(tickets);
+            if (discountsPercentForTickets.size() != tickets.size()) {
+                throw new IllegalArgumentException(
+                        "Dimensions of tickets and discountsPercentForTickets must be equal!");
+            }
+            Iterator<Ticket> ticketsIt = tickets.iterator();
+            Iterator<Double> discountsIt = discountsPercentForTickets.iterator();
+            while (ticketsIt.hasNext()) {
+                Ticket ticket = ticketsIt.next();
+                Double discountInPercent = discountsIt.next();
+                if (ticket.getDiscountInPercent() < discountInPercent) {
+                    ticket.setDiscountInPercent(discountInPercent);
+                }
+            }
+        }
+        tickets.forEach(this::applyDiscountForTicket);
     }
 
     private void applyDiscountForTicket(Ticket ticket) {
-	ticket.setTotalPriceInCents(ticket.getCalculatedPriceInCents()
-		- (long) (ticket.getCalculatedPriceInCents() * ticket.getDiscountInPercent() / 100));
+        ticket.setTotalPriceInCents(ticket.getCalculatedPriceInCents()
+                - (long) (ticket.getCalculatedPriceInCents() * ticket.getDiscountInPercent() / 100));
     }
-
 }

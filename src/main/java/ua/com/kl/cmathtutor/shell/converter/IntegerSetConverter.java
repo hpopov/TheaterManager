@@ -19,23 +19,24 @@ public class IntegerSetConverter implements Converter<Set<Integer>> {
 
     @Override
     public boolean supports(Class<?> type, String optionContext) {
-	return Set.class.isAssignableFrom(type);
+        return Set.class.isAssignableFrom(type);
     }
 
     @Override
     public Set<Integer> convertFromText(String value, Class<?> targetType, String optionContext) {
-	if (!value.matches(SET_VALUE_PATTERN)) {
-	    throw new IllegalArgumentException("Value " + value
-		    + " can not be converted to set of integer, expected pattern is " + SET_VALUE_PATTERN);
-	}
-	Iterable<Integer> integers = Stream.of(value.split(",")).map(Integer::valueOf).collect(Collectors.toList());
-	return Sets.newLinkedHashSet(integers);
+        if (!value.matches(SET_VALUE_PATTERN)) {
+            throw new IllegalArgumentException("Value " + value
+                    + " can not be converted to set of integer, expected pattern is " + SET_VALUE_PATTERN);
+        }
+        Iterable<Integer> integers = Stream.of(value.split(",")).map(Integer::valueOf).collect(Collectors.toList());
+        return Sets.newLinkedHashSet(integers);
     }
 
     @Override
-    public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData,
-	    String optionContext, MethodTarget target) {
-	return false;
+    public boolean getAllPossibleValues(
+            List<Completion> completions, Class<?> targetType, String existingData,
+            String optionContext, MethodTarget target
+    ) {
+        return false;
     }
-
 }

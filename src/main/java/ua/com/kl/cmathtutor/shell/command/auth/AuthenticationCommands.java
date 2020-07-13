@@ -23,63 +23,66 @@ public class AuthenticationCommands implements CommandMarker {
 
     @CliAvailabilityIndicator({ "auth log-out" })
     public boolean isLogoutAvailable() {
-	return authenticationState.isAuthenticated();
+        return authenticationState.isAuthenticated();
     }
 
     @CliAvailabilityIndicator({ "auth current" })
     public boolean isCurrentUserAvailable() {
-	return authenticationState.isAuthenticated();
+        return authenticationState.isAuthenticated();
     }
 
     @CliAvailabilityIndicator({ "auth sign-up", "auth sign-in" })
     public boolean isSignAvailable() {
-	return !authenticationState.isAuthenticated();
+        return !authenticationState.isAuthenticated();
     }
 
     @CliCommand(value = "auth sign-up", help = "Register new user")
     public String signUp(
-	    @CliOption(key = { "name" }, mandatory = false, help = "First name of the user") final String firstName,
-	    @CliOption(key = { "surname" }, mandatory = false, help = "Last name of the user") final String lastName,
-	    @CliOption(key = { "email" }, mandatory = true, help = "User email (is used as login)") final String email,
-	    @CliOption(key = { "password" }, mandatory = true, help = "User password") final String password,
-	    @CliOption(key = {
-		    "birthday" }, mandatory = true,
-		    help = "User birth date in '" + CustomDateConverter.DATE_FORMAT
-			    + "' format") final CustomDate birthdayDate) {
-	User registeredUser = userService.create(User.builder()
-		.birthdayDate(birthdayDate.getDate())
-		.email(email)
-		.firstName(firstName)
-		.lastName(lastName)
-		.password(password)
-		.build());
-	return String.format("User with email %s was registered[id=%s]", registeredUser.getEmail(),
-		registeredUser.getId());
+            @CliOption(key = { "name" }, mandatory = false, help = "First name of the user") final String firstName,
+            @CliOption(key = { "surname" }, mandatory = false, help = "Last name of the user") final String lastName,
+            @CliOption(key = { "email" }, mandatory = true, help = "User email (is used as login)") final String email,
+            @CliOption(key = { "password" }, mandatory = true, help = "User password") final String password,
+            @CliOption(key = {
+                    "birthday" },
+                mandatory = true,
+                help = "User birth date in '" + CustomDateConverter.DATE_FORMAT
+                        + "' format") final CustomDate birthdayDate
+    ) {
+        User registeredUser = userService.create(User.builder()
+                .birthdayDate(birthdayDate.getDate())
+                .email(email)
+                .firstName(firstName)
+                .lastName(lastName)
+                .password(password)
+                .build());
+        return String.format("User with email %s was registered[id=%s]", registeredUser.getEmail(),
+                registeredUser.getId());
     }
 
     @CliCommand(value = "auth sign-in", help = "Sign user in")
     public String signIn(
-	    @CliOption(key = { "email" }, mandatory = true, help = "User email (is used as login)") final String email,
-	    @CliOption(key = { "password" }, mandatory = true, help = "User password") final String password) {
-	return ExceptionWrapperUtils.handleException(() -> {
-	    User user = userService.getByEmail(email);
-	    if (password.equals(user.getPassword())) {
-		authenticationState.setAuthenticatedUser(user);
-		return "User with email " + email + " logged in successfully.";
-	    }
-	    return "Incorrect password for user with email " + email + ".";
-	});
+            @CliOption(key = { "email" }, mandatory = true, help = "User email (is used as login)") final String email,
+            @CliOption(key = { "password" }, mandatory = true, help = "User password") final String password
+    ) {
+        return ExceptionWrapperUtils.handleException(() -> {
+            User user = userService.getByEmail(email);
+            if (password.equals(user.getPassword())) {
+                authenticationState.setAuthenticatedUser(user);
+                return "User with email " + email + " logged in successfully.";
+            }
+            return "Incorrect password for user with email " + email + ".";
+        });
     }
 
     @CliCommand(value = "auth log-out", help = "Log user out")
     public String logOut() {
-	String email = authenticationState.getAuthenticatedUser().getEmail();
-	authenticationState.setAuthenticatedUser(null);
-	return "User with email " + email + " logged out successfully.";
+        String email = authenticationState.getAuthenticatedUser().getEmail();
+        authenticationState.setAuthenticatedUser(null);
+        return "User with email " + email + " logged out successfully.";
     }
 
     @CliCommand(value = "auth current", help = "View currently authenticated user")
     public User getCurrentUser() {
-	return authenticationState.getAuthenticatedUser();
+        return authenticationState.getAuthenticatedUser();
     }
 }

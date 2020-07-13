@@ -20,29 +20,30 @@ public class DateTimeConverter implements Converter<DateTime> {
     private DateFormat dateFormat;
 
     public DateTimeConverter() {
-	dateFormat = new SimpleDateFormat(FORMAT);
+        dateFormat = new SimpleDateFormat(FORMAT);
     }
 
     @Override
     public boolean supports(Class<?> type, String optionContext) {
-	return DateTime.class.isAssignableFrom(type);
+        return DateTime.class.isAssignableFrom(type);
     }
 
     @Override
     public DateTime convertFromText(String value, Class<?> targetType, String optionContext) {
-	Date date;
-	try {
-	    date = dateFormat.parse(value);
-	} catch (ParseException e) {
-	    throw new IllegalArgumentException("Unable to parse datetime with format " + FORMAT);
-	}
-	return DateTime.of(date);
+        Date date;
+        try {
+            date = dateFormat.parse(value);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Unable to parse datetime with format " + FORMAT);
+        }
+        return DateTime.of(date);
     }
 
     @Override
-    public boolean getAllPossibleValues(List<Completion> completions, Class<?> targetType, String existingData,
-	    String optionContext, MethodTarget target) {
-	return false;
+    public boolean getAllPossibleValues(
+            List<Completion> completions, Class<?> targetType, String existingData,
+            String optionContext, MethodTarget target
+    ) {
+        return false;
     }
-
 }

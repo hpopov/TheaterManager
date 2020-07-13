@@ -10,10 +10,9 @@ import org.springframework.shell.Bootstrap;
 public class App {
 
     public static void main(String[] args) throws IOException {
-	List<String> argsList = new ArrayList<String>(Arrays.asList(args));
-	argsList.add("--disableInternalCommands");
-	String[] argsArray = argsList.toArray(new String[0]);
-	Bootstrap.main(argsArray);
+        List<String> argsList = new ArrayList<String>(Arrays.asList(args));
+        argsList.add("--disableInternalCommands");
+        String[] argsArray = argsList.toArray(new String[0]);
+        Bootstrap.main(argsArray);
     }
-
 }

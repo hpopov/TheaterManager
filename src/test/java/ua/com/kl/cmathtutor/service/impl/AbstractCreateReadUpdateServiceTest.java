@@ -32,8 +32,8 @@ abstract class AbstractCreateReadUpdateServiceTest<T extends IdContainer> {
 
     @BeforeEach
     void setUpAbstract() {
-	service = getServiceForTest();
-	repository = getMockedRepository();
+        service = getServiceForTest();
+        repository = getMockedRepository();
     }
 
     protected abstract AbstractCreateReadUpdateService<T> getServiceForTest();
@@ -42,86 +42,85 @@ abstract class AbstractCreateReadUpdateServiceTest<T extends IdContainer> {
 
     @Test
     void create_ShouldSetNullIdForEntityAndSaveItUsingRepository() {
-	T entity = getDummyEntity();
-	entity.setId(100);
-	when(repository.save(any())).thenAnswer(new ReturnsArgumentAt(0));
+        T entity = getDummyEntity();
+        entity.setId(100);
+        when(repository.save(any())).thenAnswer(new ReturnsArgumentAt(0));
 
-	T returnedEntity = service.create(entity);
+        T returnedEntity = service.create(entity);
 
-	assertAll(() -> assertThat(returnedEntity, is(sameInstance(entity))),
-		() -> assertThat(returnedEntity.getId(), is(nullValue())));
+        assertAll(() -> assertThat(returnedEntity, is(sameInstance(entity))),
+                () -> assertThat(returnedEntity.getId(), is(nullValue())));
 
-	verify(repository).save(entity);
+        verify(repository).save(entity);
     }
 
     protected abstract T getDummyEntity();
 
     @Test
     void getAll_ShouldReturnRepositoryFindAllInvokationResult() {
-	List<T> entities = getAllEntities();
-	when(repository.findAll()).thenReturn(entities);
+        List<T> entities = getAllEntities();
+        when(repository.findAll()).thenReturn(entities);
 
-	List<T> returnedEntities = service.getAll();
+        List<T> returnedEntities = service.getAll();
 
-	assertThat(returnedEntities, containsInAnyOrder(entities.toArray()));
-	verify(repository).findAll();
+        assertThat(returnedEntities, containsInAnyOrder(entities.toArray()));
+        verify(repository).findAll();
     }
 
     protected abstract List<T> getAllEntities();
 
     @Test
     void whenEntityExists_Then_getById_ShouldReturnTheSameEntity() throws NotFoundException {
-	int id = 12;
-	T existedEntity = getDummyEntity();
-	existedEntity.setId(id);
-	when(repository.findById(any())).thenReturn(Optional.of(existedEntity));
+        int id = 12;
+        T existedEntity = getDummyEntity();
+        existedEntity.setId(id);
+        when(repository.findById(any())).thenReturn(Optional.of(existedEntity));
 
-	T returnedEntity = service.getById(id);
+        T returnedEntity = service.getById(id);
 
-	assertAll(() -> assertThat(returnedEntity, is(sameInstance(existedEntity))),
-		() -> assertThat(returnedEntity.getId(), is(equalTo(id))));
-	verify(repository).findById(id);
+        assertAll(() -> assertThat(returnedEntity, is(sameInstance(existedEntity))),
+                () -> assertThat(returnedEntity.getId(), is(equalTo(id))));
+        verify(repository).findById(id);
     }
 
     @Test
     void whenEntityNotExist_Then_getById_ShouldReturnTheSameEntity() throws NotFoundException {
-	int id = 12;
-	when(repository.findById(any())).thenReturn(Optional.empty());
+        int id = 12;
+        when(repository.findById(any())).thenReturn(Optional.empty());
 
-	assertThrows(NotFoundException.class, () -> service.getById(id));
-	verify(repository).findById(id);
+        assertThrows(NotFoundException.class, () -> service.getById(id));
+        verify(repository).findById(id);
     }
 
     @Test
     void whenEntityExists_Then_updateById_ShouldReturnSameEntity() throws NotFoundException {
-	int id = 12;
-	T existedEntity = getDummyEntity();
-	existedEntity.setId(id);
-	T modifiedEntity = getDummyEntity();
-	modifyNotIdFields(modifiedEntity);
-	when(repository.findById(any())).thenReturn(Optional.of(existedEntity));
-	when(repository.save(any())).thenReturn(modifiedEntity);
+        int id = 12;
+        T existedEntity = getDummyEntity();
+        existedEntity.setId(id);
+        T modifiedEntity = getDummyEntity();
+        modifyNotIdFields(modifiedEntity);
+        when(repository.findById(any())).thenReturn(Optional.of(existedEntity));
+        when(repository.save(any())).thenReturn(modifiedEntity);
 
-	T returnedEntity = service.updateById(id, modifiedEntity);
+        T returnedEntity = service.updateById(id, modifiedEntity);
 
-	assertAll(() -> assertThat(returnedEntity, is(sameInstance(modifiedEntity))),
-		() -> assertThat(returnedEntity.getId(), is(equalTo(id))));
-	verify(repository).findById(id);
-	verify(repository).save(modifiedEntity);
+        assertAll(() -> assertThat(returnedEntity, is(sameInstance(modifiedEntity))),
+                () -> assertThat(returnedEntity.getId(), is(equalTo(id))));
+        verify(repository).findById(id);
+        verify(repository).save(modifiedEntity);
     }
 
     protected abstract void modifyNotIdFields(T modifiedEntity);
 
     @Test
     void whenEntityNotExist_Then_updateById_ShouldThrowException() throws NotFoundException {
-	int id = 12;
-	T modifiedEntity = getDummyEntity();
-	modifyNotIdFields(modifiedEntity);
-	when(repository.findById(any())).thenReturn(Optional.empty());
+        int id = 12;
+        T modifiedEntity = getDummyEntity();
+        modifyNotIdFields(modifiedEntity);
+        when(repository.findById(any())).thenReturn(Optional.empty());
 
-	assertThrows(NotFoundException.class, () -> service.updateById(id, modifiedEntity));
-	verify(repository).findById(id);
-	verify(repository, never()).save(modifiedEntity);
+        assertThrows(NotFoundException.class, () -> service.updateById(id, modifiedEntity));
+        verify(repository).findById(id);
+        verify(repository, never()).save(modifiedEntity);
     }
-
 }

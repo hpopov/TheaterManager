@@ -13,6 +13,6 @@ public final class DateTime {
     private final Date date;
 
     public static DateTime of(Date date) {
-	return new DateTime(date);
+        return new DateTime(date);
     }
 }

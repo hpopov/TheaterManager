@@ -16,7 +16,6 @@ import ua.com.kl.cmathtutor.service.strategy.DiscountStrategy;
 @Configuration
 @Import(InMemoryRepositoryConfiguration.class)
 @ImportResource(locations = "classpath:auditorium-spring.xml")
-//TODO: what if include automatically only base configurations? within configuration choose implementations (i.e. DAO)
 @ComponentScan
 public class SpringConfiguraion {
 
@@ -25,10 +24,10 @@ public class SpringConfiguraion {
 
     @Bean
     public Iterable<DiscountStrategy> discountStrategies() {
-	LinkedList<DiscountStrategy> strategies = new LinkedList<>();
-	for (String beanName : applicationContext.getBeanNamesForType(DiscountStrategy.class)) {
-	    strategies.add(applicationContext.getBean(beanName, DiscountStrategy.class));
-	}
-	return strategies;
+        LinkedList<DiscountStrategy> strategies = new LinkedList<>();
+        for (String beanName : applicationContext.getBeanNamesForType(DiscountStrategy.class)) {
+            strategies.add(applicationContext.getBean(beanName, DiscountStrategy.class));
+        }
+        return strategies;
     }
 }

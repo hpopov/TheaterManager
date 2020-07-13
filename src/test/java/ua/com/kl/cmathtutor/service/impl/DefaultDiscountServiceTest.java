@@ -40,71 +40,69 @@ class DefaultDiscountServiceTest {
 
     @BeforeEach
     void initialize() {
-	service = new DefaultDiscountService(Lists.newArrayList(discountStrategy1, discountStrategy2));
+        service = new DefaultDiscountService(Lists.newArrayList(discountStrategy1, discountStrategy2));
     }
 
     @Test
     void applyDiscount_ShouldInvokeAllStrategies() {
-	ArrayList<Ticket> tickets = makeThreeDummyTickets();
-	when(discountStrategy1.getDiscountsPercentForTickets(any())).thenReturn(discounts1);
-	when(discountStrategy2.getDiscountsPercentForTickets(any())).thenReturn(discounts2);
+        ArrayList<Ticket> tickets = makeThreeDummyTickets();
+        when(discountStrategy1.getDiscountsPercentForTickets(any())).thenReturn(discounts1);
+        when(discountStrategy2.getDiscountsPercentForTickets(any())).thenReturn(discounts2);
 
-	service.applyDiscountToTickets(tickets);
+        service.applyDiscountToTickets(tickets);
 
-	verify(discountStrategy1).getDiscountsPercentForTickets(tickets);
-	verify(discountStrategy2).getDiscountsPercentForTickets(tickets);
+        verify(discountStrategy1).getDiscountsPercentForTickets(tickets);
+        verify(discountStrategy2).getDiscountsPercentForTickets(tickets);
     }
 
     private ArrayList<Ticket> makeThreeDummyTickets() {
-	return Lists.newArrayList(
-		Ticket.builder()
-			.calculatedPriceInCents(123L)
-			.build(),
-		Ticket.builder()
-			.calculatedPriceInCents(452L)
-			.build(),
-		Ticket.builder()
-			.calculatedPriceInCents(9001L)
-			.build());
+        return Lists.newArrayList(
+                Ticket.builder()
+                        .calculatedPriceInCents(123L)
+                        .build(),
+                Ticket.builder()
+                        .calculatedPriceInCents(452L)
+                        .build(),
+                Ticket.builder()
+                        .calculatedPriceInCents(9001L)
+                        .build());
     }
 
     @Test
     void whenDimensionsOfTicketsAndDiscountsDiffer_Then_applyDiscount_ShouldInvokeAllStrategies() {
-	ArrayList<Ticket> tickets = Lists.newArrayList(new Ticket(), new Ticket());
-	when(discountStrategy1.getDiscountsPercentForTickets(any())).thenReturn(discounts1);
+        ArrayList<Ticket> tickets = Lists.newArrayList(new Ticket(), new Ticket());
+        when(discountStrategy1.getDiscountsPercentForTickets(any())).thenReturn(discounts1);
 
-	assertThrows(IllegalArgumentException.class, () -> service.applyDiscountToTickets(tickets));
+        assertThrows(IllegalArgumentException.class, () -> service.applyDiscountToTickets(tickets));
 
-	verify(discountStrategy1).getDiscountsPercentForTickets(tickets);
-	verifyNoMoreInteractions(discountStrategy1, discountStrategy2);
+        verify(discountStrategy1).getDiscountsPercentForTickets(tickets);
+        verifyNoMoreInteractions(discountStrategy1, discountStrategy2);
     }
 
     @Test
     void applyDiscount_ShouldSelectMostDiscountForEachTicket() {
+        ArrayList<Ticket> tickets = makeThreeDummyTickets();
+        when(discountStrategy1.getDiscountsPercentForTickets(any())).thenReturn(discounts1);
+        when(discountStrategy2.getDiscountsPercentForTickets(any())).thenReturn(discounts2);
 
-	ArrayList<Ticket> tickets = makeThreeDummyTickets();
-	when(discountStrategy1.getDiscountsPercentForTickets(any())).thenReturn(discounts1);
-	when(discountStrategy2.getDiscountsPercentForTickets(any())).thenReturn(discounts2);
+        service.applyDiscountToTickets(tickets);
+        List<Double> discountsInTickets = tickets.stream().sequential().map(Ticket::getDiscountInPercent)
+                .collect(Collectors.toList());
 
-	service.applyDiscountToTickets(tickets);
-	List<Double> discountsInTickets = tickets.stream().sequential().map(Ticket::getDiscountInPercent)
-		.collect(Collectors.toList());
-
-	assertThat(discountsInTickets, contains(greatestDiscounts.toArray()));
+        assertThat(discountsInTickets, contains(greatestDiscounts.toArray()));
     }
 
     @Test
     void applyDiscount_ShouldModifyEachTicket() {
+        ArrayList<Ticket> tickets = makeThreeDummyTickets();
+        when(discountStrategy1.getDiscountsPercentForTickets(any())).thenReturn(discounts1);
+        when(discountStrategy2.getDiscountsPercentForTickets(any())).thenReturn(discounts2);
 
-	ArrayList<Ticket> tickets = makeThreeDummyTickets();
-	when(discountStrategy1.getDiscountsPercentForTickets(any())).thenReturn(discounts1);
-	when(discountStrategy2.getDiscountsPercentForTickets(any())).thenReturn(discounts2);
+        service.applyDiscountToTickets(tickets);
 
-	service.applyDiscountToTickets(tickets);
-
-	for (Ticket ticket : tickets) {
-	    assertThat(ticket.getTotalPriceInCents(), is(equalTo(ticket.getCalculatedPriceInCents()
-		    - (long) (ticket.getCalculatedPriceInCents() * ticket.getDiscountInPercent() / 100))));
-	}
+        for (Ticket ticket : tickets) {
+            assertThat(ticket.getTotalPriceInCents(), is(equalTo(ticket.getCalculatedPriceInCents()
+                    - (long) (ticket.getCalculatedPriceInCents() * ticket.getDiscountInPercent() / 100))));
+        }
     }
 }

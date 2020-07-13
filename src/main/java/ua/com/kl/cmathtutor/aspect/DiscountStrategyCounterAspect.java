@@ -22,11 +22,11 @@ public class DiscountStrategyCounterAspect {
 
     @Autowired
     private DiscountStrategyCounterAspect(DiscountStrategyCounterRepository discountStrategyCounterRepository) {
-	this.discountStrategyCounterRepository = discountStrategyCounterRepository;
+        this.discountStrategyCounterRepository = discountStrategyCounterRepository;
     }
 
     @Pointcut("execution(java.util.Collection<java.lang.Double> ua.com.kl.cmathtutor.service.strategy*.*." +
-	    "getDiscountsPercentForTickets(..)) && args(tickets)")
+            "getDiscountsPercentForTickets(..)) && args(tickets)")
     private void getDiscountsPercentForTickets(Collection<Ticket> tickets) {
     }
 
@@ -37,26 +37,26 @@ public class DiscountStrategyCounterAspect {
     @SuppressWarnings("unchecked")
     @Around("getDiscountsPercentForTickets(tickets) && withinDiscountStrategy()")
     private Collection<Double> countDiscountApplied(ProceedingJoinPoint jp, Collection<Ticket> tickets)
-	    throws Throwable {
-	Collection<Double> discounts = (Collection<Double>) jp.proceed();
-	String strategyClassSimpleName = jp.getThis().getClass().getSimpleName();
-	if (tickets.isEmpty()) {
-	    return discounts;
-	}
-	User ticketOwner = tickets.iterator().next().getOwner();
-	if (discounts.stream().anyMatch(d -> d != 0)) {
-	    incrementDiscountCounter(ticketOwner, strategyClassSimpleName);
-	}
-	return discounts;
+            throws Throwable {
+        Collection<Double> discounts = (Collection<Double>) jp.proceed();
+        String strategyClassSimpleName = jp.getThis().getClass().getSimpleName();
+        if (tickets.isEmpty()) {
+            return discounts;
+        }
+        User ticketOwner = tickets.iterator().next().getOwner();
+        if (discounts.stream().anyMatch(d -> d != 0)) {
+            incrementDiscountCounter(ticketOwner, strategyClassSimpleName);
+        }
+        return discounts;
     }
 
     private void incrementDiscountCounter(User owner, String strategyClassSimpleName) {
-	DiscountStrategyCounter discountStrategyCounter = discountStrategyCounterRepository
-		.findByOwnerAndStrategyName(owner, strategyClassSimpleName).orElse(
-			DiscountStrategyCounter.builder().discountStrategyName(strategyClassSimpleName)
-				.ticketOwner(owner)
-				.build());
-	discountStrategyCounter.setCounter(discountStrategyCounter.getCounter() + 1);
-	discountStrategyCounterRepository.save(discountStrategyCounter);
+        DiscountStrategyCounter discountStrategyCounter = discountStrategyCounterRepository
+                .findByOwnerAndStrategyName(owner, strategyClassSimpleName).orElse(
+                        DiscountStrategyCounter.builder().discountStrategyName(strategyClassSimpleName)
+                                .ticketOwner(owner)
+                                .build());
+        discountStrategyCounter.setCounter(discountStrategyCounter.getCounter() + 1);
+        discountStrategyCounterRepository.save(discountStrategyCounter);
     }
 }

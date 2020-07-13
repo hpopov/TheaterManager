@@ -28,55 +28,53 @@ class BirthdayDiscountStrategyTest extends AbstractDiscountStrategyTest {
 
     @BeforeEach
     void initialize() {
-	strategy = new BirthdayDiscountStrategy();
+        strategy = new BirthdayDiscountStrategy();
     }
 
     @Test
     void whenOwnerIsAbsent_Then_getDiscountsPercentForTickets_ShouldReturnZero() {
-	ArrayList<Ticket> tickets = Lists.newArrayList(new Ticket(), new Ticket());
+        ArrayList<Ticket> tickets = Lists.newArrayList(new Ticket(), new Ticket());
 
-	assertThat(strategy.getDiscountsPercentForTickets(tickets), contains(Collections.nCopies(2, 0d).toArray()));
+        assertThat(strategy.getDiscountsPercentForTickets(tickets), contains(Collections.nCopies(2, 0d).toArray()));
     }
 
     @ParameterizedTest(name = "User with birthday at {0} should receive discount of 5% per each ticket")
     @MethodSource("getBirthdayDatesWithin5Days")
     void whenOwnerBirthdayIsWithin5Days_Then_getDiscountsPercentForTickets_ShouldReturnDiscount(Date birthdayDate) {
-	List<Ticket> tickets = createTicketsWithOwnerBirthday(birthdayDate);
+        List<Ticket> tickets = createTicketsWithOwnerBirthday(birthdayDate);
 
-	assertThat(strategy.getDiscountsPercentForTickets(tickets), contains(Collections.nCopies(2, 5d).toArray()));
+        assertThat(strategy.getDiscountsPercentForTickets(tickets), contains(Collections.nCopies(2, 5d).toArray()));
     }
 
     private static List<Date> getBirthdayDatesWithin5Days() {
-	return Collections.nCopies(11, Calendar.getInstance()).stream().map(cal -> {
-	    Calendar nowCalendar = (Calendar) cal.clone();
-	    nowCalendar.set(Calendar.HOUR_OF_DAY, 0);
-	    nowCalendar.set(Calendar.MINUTE, 0);
-	    nowCalendar.set(Calendar.SECOND, 0);
-	    nowCalendar.set(Calendar.MILLISECOND, 0);
-	    return nowCalendar;
-	}).peek(new Consumer<Calendar>() {
+        return Collections.nCopies(11, Calendar.getInstance()).stream().map(cal -> {
+            Calendar nowCalendar = (Calendar) cal.clone();
+            nowCalendar.set(Calendar.HOUR_OF_DAY, 0);
+            nowCalendar.set(Calendar.MINUTE, 0);
+            nowCalendar.set(Calendar.SECOND, 0);
+            nowCalendar.set(Calendar.MILLISECOND, 0);
+            return nowCalendar;
+        }).peek(new Consumer<Calendar>() {
 
-	    private int shift = -5;
+            private int shift = -5;
 
-	    @Override
-	    public void accept(Calendar t) {
-		t.add(Calendar.DAY_OF_YEAR, shift);
-		t.add(Calendar.YEAR, shift);
-		++shift;
-	    }
-
-	}).map(Calendar::getTime).collect(Collectors.toList());
+            @Override
+            public void accept(Calendar t) {
+                t.add(Calendar.DAY_OF_YEAR, shift);
+                t.add(Calendar.YEAR, shift);
+                ++shift;
+            }
+        }).map(Calendar::getTime).collect(Collectors.toList());
     }
 
     private List<Ticket> createTicketsWithOwnerBirthday(Date birthdayDate) {
-	User owner = User.builder().birthdayDate(birthdayDate).build();
-	return Lists.newArrayList(Ticket.builder().owner(owner).build(),
-		Ticket.builder().owner(owner).build());
+        User owner = User.builder().birthdayDate(birthdayDate).build();
+        return Lists.newArrayList(Ticket.builder().owner(owner).build(),
+                Ticket.builder().owner(owner).build());
     }
 
     @Override
     protected DiscountStrategy getDiscountStrategy() {
-	return strategy;
+        return strategy;
     }
-
 }

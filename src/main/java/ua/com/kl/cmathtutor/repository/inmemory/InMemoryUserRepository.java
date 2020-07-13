@@ -14,27 +14,27 @@ public class InMemoryUserRepository extends AbstractCrudInMemoryRepository<User>
 
     @Override
     public Optional<User> findByEmail(String email) {
-	return findAll().stream().filter(user -> email.equals(user.getEmail())).findFirst();
+        return findAll().stream().filter(user -> email.equals(user.getEmail())).findFirst();
     }
 
     @Override
     protected void checkMandatoryAttributes(User entity) {
-	if (Objects.isNull(entity.getBirthdayDate())) {
-	    throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "birthdayDate"));
-	}
-	if (Objects.isNull(entity.getEmail())) {
-	    throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "email"));
-	}
-	long usersWithSameEmailCount = findAll().stream()
-		.filter(user -> user.getEmail().equals(entity.getEmail()))
-		.filter(user -> !user.getId().equals(entity.getId()))
-		.count();
-	if (usersWithSameEmailCount != 0) {
-	    throw new DuplicateKeyException(String.format(
-		    "User email has to be unique, but found %s other users with same email", usersWithSameEmailCount));
-	}
-	if (Objects.isNull(entity.getPassword())) {
-	    throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "password"));
-	}
+        if (Objects.isNull(entity.getBirthdayDate())) {
+            throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "birthdayDate"));
+        }
+        if (Objects.isNull(entity.getEmail())) {
+            throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "email"));
+        }
+        long usersWithSameEmailCount = findAll().stream()
+                .filter(user -> user.getEmail().equals(entity.getEmail()))
+                .filter(user -> !user.getId().equals(entity.getId()))
+                .count();
+        if (usersWithSameEmailCount != 0) {
+            throw new DuplicateKeyException(String.format(
+                    "User email has to be unique, but found %s other users with same email", usersWithSameEmailCount));
+        }
+        if (Objects.isNull(entity.getPassword())) {
+            throw new MandatoryAttributeException(String.format(ATTRIBUTE_IS_MANDATORY_MSG, "password"));
+        }
     }
 }

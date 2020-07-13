@@ -26,11 +26,11 @@ public class EventCountingAspect {
 
     @Autowired
     public EventCountingAspect(EventCounterRepository eventCounterRepository) {
-	this.eventCounterRepository = eventCounterRepository;
+        this.eventCounterRepository = eventCounterRepository;
     }
 
     @Pointcut("execution(ua.com.kl.cmathtutor.domain.entity.Event "
-	    + "ua.com.kl.cmathtutor.service.*.getById(..) throws *)")
+            + "ua.com.kl.cmathtutor.service.*.getById(..) throws *)")
     private void getByIdMethod() {
     }
 
@@ -44,14 +44,14 @@ public class EventCountingAspect {
 
     @AfterReturning(pointcut = "eventServiceGetByIdMethod()", returning = "event")
     public void countEventQueriesByName(Event event) {
-	EventCounter eventCounter = resolveEventCounter(event.getId());
-	eventCounter.setAccessedCounter(eventCounter.getAccessedCounter() + 1);
-	eventCounterRepository.save(eventCounter);
+        EventCounter eventCounter = resolveEventCounter(event.getId());
+        eventCounter.setAccessedCounter(eventCounter.getAccessedCounter() + 1);
+        eventCounterRepository.save(eventCounter);
     }
 
     private EventCounter resolveEventCounter(Integer eventId) {
-	return eventCounterRepository.findByEventId(eventId)
-		.orElseGet(() -> EventCounter.builder().eventId(eventId).build());
+        return eventCounterRepository.findByEventId(eventId)
+                .orElseGet(() -> EventCounter.builder().eventId(eventId).build());
     }
 
     @Pointcut("this(ua.com.kl.cmathtutor.service.TicketService+)")
@@ -59,42 +59,46 @@ public class EventCountingAspect {
     }
 
     @Pointcut("execution(* ua.com.kl.cmathtutor.service.*.*.getNewTicketsForEventPresentation(..) throws *)"
-	    + " && args(eventPresentation, seatNumbers)")
-    private void getNewTicketsForEventPresentationMethod(EventPresentation eventPresentation,
-	    Set<Integer> seatNumbers) {
+            + " && args(eventPresentation, seatNumbers)")
+    private void getNewTicketsForEventPresentationMethod(
+            EventPresentation eventPresentation,
+            Set<Integer> seatNumbers
+    ) {
     }
 
     @Pointcut("withinTicketServiceSuccessors() && getNewTicketsForEventPresentationMethod(eventPresentation, seatNumbers)")
-    private void getNewTicketsWithinTicketService(EventPresentation eventPresentation,
-	    Set<Integer> seatNumbers) {
+    private void getNewTicketsWithinTicketService(
+            EventPresentation eventPresentation,
+            Set<Integer> seatNumbers
+    ) {
     }
 
     @AfterReturning(pointcut = "getNewTicketsWithinTicketService(ep, seatNumbers)")
     private void countQueryingOfEventBasePrice(EventPresentation ep, Set<Integer> seatNumbers)
-	    throws Throwable {
-	EventCounter eventCounter = resolveEventCounter(ep.getEvent().getId());
-	eventCounter.setPriceQueriedCounter(eventCounter.getPriceQueriedCounter() + 1);
-	eventCounterRepository.save(eventCounter);
+            throws Throwable {
+        EventCounter eventCounter = resolveEventCounter(ep.getEvent().getId());
+        eventCounter.setPriceQueriedCounter(eventCounter.getPriceQueriedCounter() + 1);
+        eventCounterRepository.save(eventCounter);
     }
 
     @Pointcut("execution(java.util.List<ua.com.kl.cmathtutor.domain.entity.Ticket> "
-	    + "ua.com.kl.cmathtutor.service.*.*.bookTickets(..))")
+            + "ua.com.kl.cmathtutor.service.*.*.bookTickets(..))")
     private void bookTickets() {
     }
 
     @AfterReturning(pointcut = "withinTicketServiceSuccessors() && bookTickets()", returning = "tickets")
     private void countTimesWhenTicketsAreBookedForEvent(List<Ticket> tickets) {
-	Set<Integer> eventIds = tickets.stream().map(Ticket::getEventPresentation).map(EventPresentation::getEvent)
-		.map(Event::getId).collect(Collectors.toSet());
-	if (eventIds.remove(null)) {
-	    log.warn("Some event presentations among booked tickets don't refer to saved Event!");
-	}
-	eventIds.forEach(this::incrementTicketsBookedCounterForEventId);
+        Set<Integer> eventIds = tickets.stream().map(Ticket::getEventPresentation).map(EventPresentation::getEvent)
+                .map(Event::getId).collect(Collectors.toSet());
+        if (eventIds.remove(null)) {
+            log.warn("Some event presentations among booked tickets don't refer to saved Event!");
+        }
+        eventIds.forEach(this::incrementTicketsBookedCounterForEventId);
     }
 
     private void incrementTicketsBookedCounterForEventId(Integer eventId) {
-	EventCounter eventCounter = resolveEventCounter(eventId);
-	eventCounter.setTicketsBookedCounter(eventCounter.getTicketsBookedCounter() + 1);
-	eventCounterRepository.save(eventCounter);
+        EventCounter eventCounter = resolveEventCounter(eventId);
+        eventCounter.setTicketsBookedCounter(eventCounter.getTicketsBookedCounter() + 1);
+        eventCounterRepository.save(eventCounter);
     }
 }

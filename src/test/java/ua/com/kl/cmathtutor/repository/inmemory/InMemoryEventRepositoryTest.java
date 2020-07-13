@@ -11,17 +11,17 @@ public class InMemoryEventRepositoryTest extends AbstractCrudInMemoryRepositoryT
 
     @Override
     protected InMemoryEventRepository getRepositoryForTesting() {
-	return new InMemoryEventRepository();
+        return new InMemoryEventRepository();
     }
 
     @Override
     protected Event getDummyEntity() {
-	return Event.builder().baseTicketPriceInCents(123L).name("EventName").rating(Rating.LOW).build();
+        return Event.builder().baseTicketPriceInCents(123L).name("EventName").rating(Rating.LOW).build();
     }
 
     @Override
     protected void modifyNotIdFields(Event savedEntity) {
-	savedEntity.setName("Changed event name");
+        savedEntity.setName("Changed event name");
     }
 
     @Override
@@ -30,7 +30,6 @@ public class InMemoryEventRepositoryTest extends AbstractCrudInMemoryRepositoryT
 
     @Override
     public List<Event> getAllEntities() {
-	return Lists.newArrayList(getDummyEntity(), getDummyEntity(), getDummyEntity());
+        return Lists.newArrayList(getDummyEntity(), getDummyEntity(), getDummyEntity());
     }
-
 }

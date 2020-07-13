@@ -23,32 +23,31 @@ abstract class AbstractDiscountStrategyTest {
     @ParameterizedTest
     @CsvSource(value = { "3", "0", "5" })
     void getDiscountsPercentForTickets_ShouldReturnSameDimensionOfDiscountsAsTickets(int dimension) {
-	Collection<Ticket> tickets = Collections.nCopies(dimension, makeDummyTicket());
+        Collection<Ticket> tickets = Collections.nCopies(dimension, makeDummyTicket());
 
-	Collection<Double> discounts = getDiscountStrategy().getDiscountsPercentForTickets(tickets);
+        Collection<Double> discounts = getDiscountStrategy().getDiscountsPercentForTickets(tickets);
 
-	assertThat(tickets.size(), is(equalTo(discounts.size())));
+        assertThat(tickets.size(), is(equalTo(discounts.size())));
     }
 
     protected abstract DiscountStrategy getDiscountStrategy();
 
     private Ticket makeDummyTicket() {
-	return Ticket.builder().calculatedPriceInCents(123L).discountInPercent(1d).build();
+        return Ticket.builder().calculatedPriceInCents(123L).discountInPercent(1d).build();
     }
 
     @Test
     void whenTicketsHaveDifferentOwners_Then_getDiscountsPercentForTickets_ShouldThrowException() {
-	Collection<Ticket> tickets = Lists.newArrayList(makeTicketWithOwnerId(1),
-		makeTicketWithOwnerId(2));
+        Collection<Ticket> tickets = Lists.newArrayList(makeTicketWithOwnerId(1),
+                makeTicketWithOwnerId(2));
 
-	assertThrows(IllegalArgumentException.class,
-		() -> getDiscountStrategy().getDiscountsPercentForTickets(tickets));
+        assertThrows(IllegalArgumentException.class,
+                () -> getDiscountStrategy().getDiscountsPercentForTickets(tickets));
     }
 
     private Ticket makeTicketWithOwnerId(Integer id) {
-	Ticket ticket = makeDummyTicket();
-	ticket.setOwner(User.builder().id(id).build());
-	return ticket;
+        Ticket ticket = makeDummyTicket();
+        ticket.setOwner(User.builder().id(id).build());
+        return ticket;
     }
-
 }

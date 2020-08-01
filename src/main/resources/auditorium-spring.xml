@@ -12,7 +12,7 @@
 		http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 
 	<context:property-placeholder
-		location="classpath:auditorium.properties" value-separator="=" />
+		location="classpath:auditorium.properties"/>
 
 	<util:list id="auditoriums">
 		<bean class="ua.com.kl.cmathtutor.domain.entity.Auditorium">
